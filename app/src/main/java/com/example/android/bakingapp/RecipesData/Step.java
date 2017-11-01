@@ -13,6 +13,7 @@ public class Step implements Parcelable {
      * Fields
      */
 
+    private int mId;
     private String mShortDescription;
     private String mDescription;
     private String mVideoUrl;
@@ -22,7 +23,8 @@ public class Step implements Parcelable {
      * Constructors
      */
 
-    public Step(String shortDescription, String description, String videoUrl, String thumbnailUrl) {
+    public Step(int id, String shortDescription, String description, String videoUrl, String thumbnailUrl) {
+        mId = id;
         mShortDescription = shortDescription;
         mDescription = description;
         mVideoUrl = videoUrl;
@@ -30,6 +32,7 @@ public class Step implements Parcelable {
     }
 
     private Step(Parcel in) {
+        mId = in.readInt();
         mShortDescription = in.readString();
         mDescription = in.readString();
         mVideoUrl = in.readString();
@@ -47,6 +50,7 @@ public class Step implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(mId);
         parcel.writeString(mShortDescription);
         parcel.writeString(mDescription);
         parcel.writeString(mVideoUrl);
@@ -70,6 +74,7 @@ public class Step implements Parcelable {
      * Getters
      */
 
+    public int getStepId() { return mId; }
     public String getStepShortDescription() { return mShortDescription; }
     public String getStepDescription() { return mDescription; }
     public String getStepVideoUrl() { return mVideoUrl; }
@@ -79,6 +84,7 @@ public class Step implements Parcelable {
      * Setters
      */
 
+    public void setStepId(int id) { mId = id; }
     public void setStepShortDescription(String shortDescription) { mShortDescription = shortDescription; }
     public void setStepDescription(String description) { mDescription = description; }
     public void setStepVideoUrl(String videoUrl) { mVideoUrl = videoUrl; }

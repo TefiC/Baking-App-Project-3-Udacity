@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.android.bakingapp.Fragments.FavoritesFragment;
-import com.example.android.bakingapp.Fragments.MainFragment;
+import com.example.android.bakingapp.Fragments.HomeFragment;
 
 /**
  * An adapter to handle tabs in the main recipes gridView layout
@@ -31,7 +31,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return MainFragment.newInstance();
+                return HomeFragment.newInstance();
             case 1:
                 return FavoritesFragment.newInstance();
             default:

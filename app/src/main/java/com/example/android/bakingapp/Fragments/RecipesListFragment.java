@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import com.example.android.bakingapp.Adapters.MainPagerAdapter;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
+import com.example.android.bakingapp.Utils.NetworkUtils;
+
+import java.util.ArrayList;
 
 /**
  * Fragment that displays a list of recipes
@@ -23,7 +26,7 @@ public class RecipesListFragment extends Fragment {
      * Fields
      */
 
-    private Recipe[] mRecipesArray;
+    public static ArrayList<Recipe> mRecipesArray;
 
     /*
      * Methods
@@ -34,6 +37,8 @@ public class RecipesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
+
+        NetworkUtils.fetchRecipesFromInternet(getActivity(), getLoaderManager());
         setupTabs(rootView);
 
         return rootView;

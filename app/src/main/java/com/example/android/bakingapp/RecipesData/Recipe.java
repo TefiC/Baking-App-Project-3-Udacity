@@ -3,6 +3,8 @@ package com.example.android.bakingapp.RecipesData;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 /**
  * Represents a recipe with its associated data
  */
@@ -14,8 +16,8 @@ public class Recipe implements Parcelable {
      */
 
     private String mName;
-    private Ingredient[] mIngredients;
-    private Step[] mSteps;
+    private ArrayList<Ingredient> mIngredients;
+    private ArrayList<Step> mSteps;
     private int mServings;
     private String mImage;
 
@@ -24,7 +26,7 @@ public class Recipe implements Parcelable {
      * Constructors
      */
 
-    public Recipe(String name, Ingredient[] ingredients, Step[] steps, int servings, String image) {
+    public Recipe(String name, ArrayList<Ingredient>  ingredients, ArrayList<Step> steps, int servings, String image) {
         mName = name;
         mIngredients = ingredients;
         mSteps = steps;
@@ -34,8 +36,8 @@ public class Recipe implements Parcelable {
 
     private Recipe(Parcel in) {
         mName = in.readString();
-        mIngredients = in.createTypedArray(Ingredient.CREATOR);
-        mSteps = in.createTypedArray(Step.CREATOR);
+        mIngredients = in.createTypedArrayList(Ingredient.CREATOR);
+        mSteps = in.createTypedArrayList(Step.CREATOR);
         mServings = in.readInt();
         mImage = in.readString();
     }
@@ -52,8 +54,8 @@ public class Recipe implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(mName);
-        parcel.writeTypedArray(mIngredients, 0);
-        parcel.writeTypedArray(mSteps, 0);
+        parcel.writeTypedList(mIngredients);
+        parcel.writeTypedList(mSteps);
         parcel.writeInt(mServings);
         parcel.writeString(mImage);
     }
@@ -75,8 +77,8 @@ public class Recipe implements Parcelable {
      */
 
     public String getRecipeName() { return mName; }
-    public Ingredient[] getRecipeIngredients() { return mIngredients; }
-    public Step[] getRecipeSteps() { return mSteps; }
+    public ArrayList<Ingredient> getRecipeIngredients() { return mIngredients; }
+    public ArrayList<Step>  getRecipeSteps() { return mSteps; }
     public int getRecipeServings() { return mServings; }
     public String getRecipeImage() { return mImage; }
 
@@ -85,8 +87,8 @@ public class Recipe implements Parcelable {
      */
 
     public void setRecipeName(String name) { mName = name; }
-    public void setRecipeIngredients(Ingredient[] ingredients) { mIngredients = ingredients; }
-    public void setRecipeSteps(Step[] steps) { mSteps = steps; }
+    public void setRecipeIngredients(ArrayList<Ingredient> ingredients) { mIngredients = ingredients; }
+    public void setRecipeSteps(ArrayList<Step>  steps) { mSteps = steps; }
     public void setRecipeServings(int servings) { mServings = servings; }
     public void setRecipeImage(String image) { mImage = image; }
 }
