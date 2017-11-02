@@ -15,7 +15,7 @@ public class Ingredient implements Parcelable {
      */
 
     private String mName;
-    private int mQuantity;
+    private String mQuantity;
     private String mUnit;
 
 
@@ -23,7 +23,7 @@ public class Ingredient implements Parcelable {
      * Constructors
      */
 
-    public Ingredient(String name, int quantity, String unit) {
+    public Ingredient(String name, String quantity, String unit) {
         mName = name;
         mQuantity = quantity;
         mUnit = unit;
@@ -31,7 +31,7 @@ public class Ingredient implements Parcelable {
 
     private Ingredient(Parcel in) {
         mName = in.readString();
-        mQuantity = in.readInt();
+        mQuantity = in.readString();
         mUnit = in.readString();
     }
 
@@ -47,7 +47,7 @@ public class Ingredient implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(mName);
-        parcel.writeInt(mQuantity);
+        parcel.writeString(mQuantity);
         parcel.writeString(mUnit);
     }
 
@@ -69,7 +69,7 @@ public class Ingredient implements Parcelable {
      */
 
     public String getIngredientName() { return mName; }
-    public int getIngredientQuantity() { return mQuantity; }
+    public String getIngredientQuantity() { return mQuantity; }
     public String getIngredientUnit() { return mUnit; }
 
     /*
@@ -77,6 +77,6 @@ public class Ingredient implements Parcelable {
      */
 
     public void setIngredientName(String name) { mName = name; }
-    public void setIngredientQuantity(int quantity) { mQuantity = quantity; }
+    public void setIngredientQuantity(String quantity) { mQuantity = quantity; }
     public void setIngredientUnit(String unit) { mUnit = unit; }
 }

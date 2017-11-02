@@ -57,9 +57,30 @@ public class RecipeDataUtils {
             ArrayList<Ingredient> recipeIngredients = createRecipeIngredientsArray(recipeJSON.optJSONArray("ingredients"));
             ArrayList<Step> recipeSteps = createRecipeStepsArray(recipeJSON.optJSONArray("steps"));
             int recipeServings = Integer.parseInt(recipeJSON.getString("servings"));
-            String recipeImage = recipeJSON.getString("image");
+
+            String recipeImage = buildRecipeName(recipeJSON);
 
             return new Recipe(recipeName, recipeIngredients, recipeSteps, recipeServings, recipeImage);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private static String buildRecipeName(JSONObject recipeJSON) {
+        String recipeImage;
+
+        try {
+
+            if(!recipeJSON.getString("image").equals("")) {
+                recipeImage = recipeJSON.getString("image");
+            } else {
+                recipeImage = "recipe" + recipeJSON.getInt("id");
+            }
+
+            return recipeImage;
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -156,7 +177,7 @@ public class RecipeDataUtils {
         try {
 
             String ingredientName = ingredientJSON.getString("ingredient");
-            int ingredientQuantity = Integer.parseInt(ingredientJSON.getString("quantity"));
+            String ingredientQuantity = ingredientJSON.getString("quantity");
             String ingredientMeasure = ingredientJSON.getString("measure");
 
             return new Ingredient(ingredientName, ingredientQuantity, ingredientMeasure);

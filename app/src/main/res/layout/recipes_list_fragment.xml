@@ -19,10 +19,4 @@
         android:layout_height="0px"
         android:layout_weight="1" />
 
-    <Button
-        android:id="@+id/details_button"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:onClick="launchDetails" />
-
 </LinearLayout>

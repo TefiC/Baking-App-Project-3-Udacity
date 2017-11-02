@@ -7,6 +7,9 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.android.bakingapp.Fragments.IngredientsFragment;
 import com.example.android.bakingapp.Fragments.StepFragment;
+import com.example.android.bakingapp.RecipesData.Recipe;
+
+import java.util.ArrayList;
 
 /**
  * Fragment Pager for the details ingredients and steps tabs
@@ -14,25 +17,43 @@ import com.example.android.bakingapp.Fragments.StepFragment;
 
 public class DetailsPagerAdapter extends FragmentPagerAdapter {
 
-    private String tabTitles[] = new String[]{"Ingredients", "Step1", "Step2", "Step3", "Step4", "Step5", "Step6"};
-    private Context context;
+    private ArrayList<String> tabTitles = new ArrayList<String>();
+    private Context mContext;
 
-    public DetailsPagerAdapter(FragmentManager fm, Context context) {
+    private Recipe mRecipeSelected;
+
+    public DetailsPagerAdapter(FragmentManager fm, Context context,
+                               Recipe recipe) {
         super(fm);
-        this.context = context;
+        mContext = context;
+        mRecipeSelected = recipe;
+        addTitleDynamically();
+    }
+
+    /**
+     * Adds the necessary titles for the tabs
+     */
+    private void addTitleDynamically() {
+
+        tabTitles.add("Ingredients");
+        tabTitles.add("Introduction");
+
+        for(int i = 1; i < mRecipeSelected.getRecipeSteps().size() - 1; i++) {
+            tabTitles.add("Step " + i);
+        }
     }
 
     @Override
     public int getCount() {
-        return tabTitles.length;
+        return tabTitles.size();
     }
 
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return IngredientsFragment.newInstance();
+            return IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(), mRecipeSelected.getRecipeIngredients());
         } else if (position > 0 && position <= getCount()) {
-            return StepFragment.newInstance();
+            return StepFragment.newInstance(mRecipeSelected.getRecipeSteps().get(position - 1));
         } else {
             throw new UnsupportedOperationException("Tabs out of bounds: " + position);
         }
@@ -41,6 +62,6 @@ public class DetailsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         // Generate title based on item position
-        return tabTitles[position];
+        return tabTitles.get(position);
     }
 }

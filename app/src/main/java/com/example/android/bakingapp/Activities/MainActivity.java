@@ -1,12 +1,9 @@
 package com.example.android.bakingapp.Activities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
 
 import com.example.android.bakingapp.Fragments.DetailsFragment;
 import com.example.android.bakingapp.Fragments.RecipesListFragment;
@@ -14,7 +11,7 @@ import com.example.android.bakingapp.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private boolean mTabletLayout;
+    public static boolean mTabletLayout;
     public static Context mContext;
 
     @Override
@@ -28,8 +25,6 @@ public class MainActivity extends AppCompatActivity {
         // else, use the default fragment
         if(isTabletLayout() && savedInstanceState == null) {
             assignFragments();
-        } else if (!isTabletLayout()){
-            addOnClickListener();
         }
     }
 
@@ -59,21 +54,10 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
 
         DetailsFragment detailsFragment = new DetailsFragment();
+        detailsFragment.setRecipeSelected(null);
 
         fragmentManager.beginTransaction()
                 .add(R.id.recipe_details_view, detailsFragment)
                 .commit();
-    }
-
-    //TODO: REMOVE THIS TEST METHOD
-    private void addOnClickListener() {
-        Button button = findViewById(R.id.details_button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 }

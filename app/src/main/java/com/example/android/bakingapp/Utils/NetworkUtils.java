@@ -4,10 +4,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-
-import com.example.android.bakingapp.Loaders.RecipesInternetLoader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +24,6 @@ public class NetworkUtils {
 
     public static final String RECIPES_SEARCH_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     public static final int RECIPES_INTERNET_LOADER_ID = 59;
-
 
     /*
      * Methods
@@ -100,21 +95,5 @@ public class NetworkUtils {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    /**
-     * Fetched recipes from the internet by starting the corresponding loader
-     *
-     * @param context The context
-     * @param loaderManager The loaderManager to determine if the loader already exists
-     */
-    public static void fetchRecipesFromInternet(Context context, LoaderManager loaderManager) {
-        Loader<String> searchLoader = loaderManager.getLoader(RECIPES_INTERNET_LOADER_ID);
-
-        if (searchLoader == null) {
-            loaderManager.initLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
-        } else {
-            loaderManager.restartLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
-        }
     }
 }

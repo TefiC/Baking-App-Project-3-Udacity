@@ -5,14 +5,15 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.bakingapp.Adapters.MainPagerAdapter;
+import com.example.android.bakingapp.Adapters.RecipesMainAdapter;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
-import com.example.android.bakingapp.Utils.NetworkUtils;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,12 @@ public class RecipesListFragment extends Fragment {
      * Fields
      */
 
-    public static ArrayList<Recipe> mRecipesArray;
+    private RecyclerView mMainListRecyclerView;
+    private RecipesMainAdapter mRecipesMainAdapter;
+
+    public static ArrayList<Recipe> mRecipesArray = new ArrayList<Recipe>();
+
+    private View mRootView;
 
     /*
      * Methods
@@ -36,12 +42,11 @@ public class RecipesListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
+        mRootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
+        setupTabs(mRootView);
 
-        NetworkUtils.fetchRecipesFromInternet(getActivity(), getLoaderManager());
-        setupTabs(rootView);
 
-        return rootView;
+        return mRootView;
     }
 
     /**
@@ -68,4 +73,7 @@ public class RecipesListFragment extends Fragment {
     private static boolean favoritesExist() {
         return true;
     }
+
+
+
 }

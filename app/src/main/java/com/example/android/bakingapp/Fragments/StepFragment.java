@@ -24,12 +24,22 @@ public class StepFragment extends Fragment {
 
     private Step mStep;
 
+    private static final String RECIPE_STEP_KEY = "recipe_step";
+
     /*
      * Methods
      */
 
-    public static StepFragment newInstance() {
-        return new StepFragment();
+    public static StepFragment newInstance(Step recipeStep) {
+
+        StepFragment stepFragment = new StepFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(RECIPE_STEP_KEY, recipeStep);
+
+        stepFragment.setArguments(args);
+
+        return stepFragment;
     }
 
     @Nullable
@@ -37,8 +47,15 @@ public class StepFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_fragment, container, false);
 
+        mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
+
+
+
         TextView textView = rootView.findViewById(R.id.step_main_layout);
-        textView.setText("STEP FRAGMENT");
+
+        if(mStep != null) {
+            textView.append(mStep.getStepDescription().substring(2));
+        }
 
         return rootView;
     }
