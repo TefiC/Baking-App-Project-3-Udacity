@@ -56,6 +56,8 @@ public class DetailsFragment extends Fragment {
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
 
+        mViewPager.setCurrentItem(mCurrentTabSelected);
+
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.details_sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
