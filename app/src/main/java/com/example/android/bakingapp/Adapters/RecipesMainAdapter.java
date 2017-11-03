@@ -34,7 +34,8 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
      */
 
 
-    public RecipesMainAdapter(Context context, ArrayList<Recipe> recipesArray, RecipeAdapterOnClickHandler recipeAdapterOnClickHandler) {
+    public RecipesMainAdapter(Context context, ArrayList<Recipe> recipesArray,
+                              RecipeAdapterOnClickHandler recipeAdapterOnClickHandler) {
         mContext = context;
         mRecipesArray = recipesArray;
         mRecipeOnClickHandler = recipeAdapterOnClickHandler;
@@ -71,12 +72,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
         holder.mRecipeServingsView.setText(Integer.toString(recipe.getRecipeServings()));
         holder.mRecipesNameView.setText(recipe.getRecipeName());
 
-        if(recipe.getRecipeImage().substring(0, 6).equals("recipe")) {
-            int resourceId = mContext.getResources().getIdentifier(recipe.getRecipeImage(), "drawable", mContext.getPackageName());
-            holder.mRecipeImageView.setImageResource(resourceId);
-        } else {
-            Picasso.with(mContext).load(recipe.getRecipeImage()).into(holder.mRecipeImageView);
-        }
+        setImageResource(recipe, holder);
     }
 
     @Override
@@ -120,6 +116,23 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
                     mRecipeOnClickHandler.onClick(recipe);
                 }
             });
+        }
+    }
+
+    /**
+     * Determines the appropriate image resource for the recipe.
+     * If the image path is a URL it loads it using the Picasso library,
+     * else it find the appropriate resource in the drawables folder
+     *
+     * @param recipe The Recipe
+     * @param recipeViewHolder The Recipe's ViewHolder
+     */
+    private void setImageResource(Recipe recipe, RecipeViewHolder recipeViewHolder) {
+        if(recipe.getRecipeImage().substring(0, 6).equals("recipe")) {
+            int resourceId = mContext.getResources().getIdentifier(recipe.getRecipeImage(), "drawable", mContext.getPackageName());
+            recipeViewHolder.mRecipeImageView.setImageResource(resourceId);
+        } else {
+            Picasso.with(mContext).load(recipe.getRecipeImage()).into(recipeViewHolder.mRecipeImageView);
         }
     }
 

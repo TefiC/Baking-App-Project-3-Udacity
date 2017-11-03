@@ -23,12 +23,20 @@ public class DetailsFragment extends Fragment {
 
     private Recipe mRecipeSelected;
 
+    private ViewPager mViewPager;
+    private int mCurrentTabSelected = 0;
+    private static final String CURRENT_TAB_SELECTED_STRING = "current_tab_selected";
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.details_fragment, container, false);
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(CURRENT_TAB_SELECTED_STRING)) {
+            mCurrentTabSelected = savedInstanceState.getInt(CURRENT_TAB_SELECTED_STRING);
+        }
 
         if(mRecipeSelected != null) {
             setupTabs(rootView);
@@ -45,12 +53,12 @@ public class DetailsFragment extends Fragment {
     private void setupTabs(View rootView) {
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        viewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
+        mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
+        mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.details_sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(mViewPager);
     }
 
     /*
@@ -59,5 +67,18 @@ public class DetailsFragment extends Fragment {
 
     public void setRecipeSelected(Recipe recipeSelected) {
         mRecipeSelected = recipeSelected;
+    }
+
+    /*
+     * Lifecycle Methods
+     */
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+
+        if(mViewPager != null) {
+            outState.putInt(CURRENT_TAB_SELECTED_STRING, mViewPager.getCurrentItem());
+        }
+        super.onSaveInstanceState(outState);
     }
 }

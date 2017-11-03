@@ -27,13 +27,13 @@ public class DetailsPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         mContext = context;
         mRecipeSelected = recipe;
-        addTitleDynamically();
+        addTitlesDynamically();
     }
 
     /**
      * Adds the necessary titles for the tabs
      */
-    private void addTitleDynamically() {
+    private void addTitlesDynamically() {
 
         tabTitles.add("Ingredients");
         tabTitles.add("Introduction");
@@ -51,7 +51,7 @@ public class DetailsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(), mRecipeSelected.getRecipeIngredients());
+            return IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(), mRecipeSelected.getRecipeIngredients(), mRecipeSelected.getRecipeImage());
         } else if (position > 0 && position <= getCount()) {
             return StepFragment.newInstance(mRecipeSelected.getRecipeSteps().get(position - 1));
         } else {

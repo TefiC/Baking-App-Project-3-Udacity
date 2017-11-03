@@ -22,20 +22,26 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
 
-        if(getIntent().hasExtra("recipeObject")) {
+        getSupportActionBar().setElevation(0);
+
+        if (getIntent().hasExtra("recipeObject")) {
             mRecipeSelected = getIntent().getExtras().getParcelable("recipeObject");
         }
 
-        if(savedInstanceState == null) {
+        setupDetailsFragment();
+    }
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
+    /**
+     * Creates and assigns the details fragment
+     */
+    private void setupDetailsFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-            DetailsFragment detailsFragment = new DetailsFragment();
-            detailsFragment.setRecipeSelected(mRecipeSelected);
+        DetailsFragment detailsFragment = new DetailsFragment();
+        detailsFragment.setRecipeSelected(mRecipeSelected);
 
-            fragmentManager.beginTransaction()
-                    .add(R.id.details_fragment_container, detailsFragment)
-                    .commit();
-        }
+        fragmentManager.beginTransaction()
+                .add(R.id.details_fragment_container, detailsFragment)
+                .commit();
     }
 }

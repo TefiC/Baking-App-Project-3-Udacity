@@ -49,8 +49,6 @@ public class StepFragment extends Fragment {
 
         mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
 
-
-
         TextView textView = rootView.findViewById(R.id.step_main_layout);
 
         if(mStep != null) {

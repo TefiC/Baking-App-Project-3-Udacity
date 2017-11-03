@@ -5,13 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.bakingapp.Adapters.MainPagerAdapter;
-import com.example.android.bakingapp.Adapters.RecipesMainAdapter;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
 
@@ -27,9 +25,6 @@ public class RecipesListFragment extends Fragment {
      * Fields
      */
 
-    private RecyclerView mMainListRecyclerView;
-    private RecipesMainAdapter mRecipesMainAdapter;
-
     public static ArrayList<Recipe> mRecipesArray = new ArrayList<Recipe>();
 
     private View mRootView;
@@ -44,7 +39,6 @@ public class RecipesListFragment extends Fragment {
 
         mRootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
         setupTabs(mRootView);
-
 
         return mRootView;
     }
@@ -73,7 +67,4 @@ public class RecipesListFragment extends Fragment {
     private static boolean favoritesExist() {
         return true;
     }
-
-
-
 }

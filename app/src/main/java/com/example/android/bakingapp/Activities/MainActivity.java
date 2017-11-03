@@ -21,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = this;
 
+        getSupportActionBar().setElevation(0);
+
         // Check the layout and avoid creating repeated fragments
         // else, use the default fragment
         if(isTabletLayout() && savedInstanceState == null) {
