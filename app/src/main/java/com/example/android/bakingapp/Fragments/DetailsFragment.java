@@ -20,12 +20,44 @@ import com.example.android.bakingapp.RecipesData.Recipe;
 
 public class DetailsFragment extends Fragment {
 
+    /*
+     * Constants
+     */
+
+    private static final String TAB_SELECTED_POSITION = "tab_selected_position";
+
+    /*
+     * Fields
+     */
 
     private Recipe mRecipeSelected;
-
     private ViewPager mViewPager;
     private int mCurrentTabSelected = 0;
-    private static final String CURRENT_TAB_SELECTED_STRING = "current_tab_selected";
+
+    /*
+     * Methods
+     */
+
+    /**
+     * Method that returns an instance of the fragment, adding extras
+     * passed as parameters
+     *
+     * @param tabPosition The position of the tab that corresponds
+     *                    to the step selected by the user
+     *
+     * @return A DetailsFragment instance with extras
+     */
+    public static DetailsFragment newInstance(int tabPosition) {
+
+        DetailsFragment detailsFragment = new DetailsFragment();
+
+        // Set fragment's arguments
+        Bundle args = new Bundle();
+        args.putInt(TAB_SELECTED_POSITION, tabPosition);
+        detailsFragment.setArguments(args);
+
+        return detailsFragment;
+    }
 
 
     @Nullable
@@ -34,9 +66,7 @@ public class DetailsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.details_fragment, container, false);
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(CURRENT_TAB_SELECTED_STRING)) {
-            mCurrentTabSelected = savedInstanceState.getInt(CURRENT_TAB_SELECTED_STRING);
-        }
+        mCurrentTabSelected = getArguments().getInt(TAB_SELECTED_POSITION);
 
         if(mRecipeSelected != null) {
             setupTabs(rootView);
@@ -56,11 +86,11 @@ public class DetailsFragment extends Fragment {
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
 
-        mViewPager.setCurrentItem(mCurrentTabSelected);
-
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.details_sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        mViewPager.setCurrentItem(mCurrentTabSelected);
     }
 
     /*
@@ -69,18 +99,5 @@ public class DetailsFragment extends Fragment {
 
     public void setRecipeSelected(Recipe recipeSelected) {
         mRecipeSelected = recipeSelected;
-    }
-
-    /*
-     * Lifecycle Methods
-     */
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-
-        if(mViewPager != null) {
-            outState.putInt(CURRENT_TAB_SELECTED_STRING, mViewPager.getCurrentItem());
-        }
-        super.onSaveInstanceState(outState);
     }
 }

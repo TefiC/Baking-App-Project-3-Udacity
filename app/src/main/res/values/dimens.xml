@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="exo_player_phone_height">250</integer>
+    <integer name="exo_player_tablet_height">400</integer>
+
+</resources>

@@ -9,15 +9,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.bakingapp.Activities.DetailsActivity;
 import com.example.android.bakingapp.Activities.MainActivity;
+import com.example.android.bakingapp.Activities.StepsListActivity;
 import com.example.android.bakingapp.Adapters.RecipesMainAdapter;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
@@ -25,6 +26,7 @@ import com.example.android.bakingapp.Utils.NetworkUtils;
 
 import java.io.IOException;
 
+import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
 import static com.example.android.bakingapp.Utils.NetworkUtils.RECIPES_INTERNET_LOADER_ID;
 import static com.example.android.bakingapp.Utils.RecipeDataUtils.fillRecipesArray;
 
@@ -44,6 +46,10 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
      * Methods
      */
 
+    /**
+     * Creates an instance of the fragment
+     * @return A HomeFragment
+     */
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -80,24 +86,26 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
      */
     private void setMainActivityLayoutManager(RecyclerView recyclerView) {
 
-        // Create and apply the layout manager
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLinearLayoutManager);
+        if (mTabletLayout) {
+            // Create and apply the layout manager
+            GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+            recyclerView.setLayoutManager(mGridLayoutManager);
+        } else {
+            // Create and apply the layout manager
+            LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(mLinearLayoutManager);
+        }
     }
 
     @Override
     public void onClick(Recipe recipe) {
 
         if(MainActivity.mTabletLayout) {
-
-            DetailsFragment detailsFragment = new DetailsFragment();
-            detailsFragment.setRecipeSelected(recipe);
-
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.recipe_details_view, detailsFragment)
-                    .commit();
-        } else {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("recipeObject", recipe);
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(getActivity(), StepsListActivity.class);
             intent.putExtra("recipeObject", recipe);
             startActivity(intent);
         }

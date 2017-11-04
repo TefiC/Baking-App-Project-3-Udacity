@@ -1,5 +1,8 @@
 package com.example.android.bakingapp.Utils;
 
+import android.content.Context;
+import android.util.TypedValue;
+
 import com.example.android.bakingapp.Fragments.RecipesListFragment;
 import com.example.android.bakingapp.RecipesData.Ingredient;
 import com.example.android.bakingapp.RecipesData.Recipe;
@@ -186,5 +189,19 @@ public class RecipeDataUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Converts Dp to Pixels to use when setting LayoutParams
+     *
+     * @param dimensionInDp The dimension to convert
+     * @param context The context of the activity that called this method
+     *
+     * @return The dimension passed as argument in pixels
+     */
+    public static int convertDpToPixels(int dimensionInDp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                dimensionInDp,
+                context.getResources().getDisplayMetrics());
     }
 }
