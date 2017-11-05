@@ -24,6 +24,9 @@ public class DetailsActivity extends AppCompatActivity {
     private Recipe mRecipeSelected;
     private int mTabPosition;
 
+    private static final String TAG_DETAILS_FRAGMENT = "DetailsFragment";
+    private DetailsFragment mDetailsFragment;
+
     /*
      * Methods
      */
@@ -33,9 +36,10 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
 
+        // Remove action bar shadow and elevation
         getSupportActionBar().setElevation(0);
 
-        if (getIntent().hasExtra("recipeObject")) {
+        if (getIntent().hasExtra("recipeObject") && getIntent().hasExtra("tabPosition")) {
             mRecipeSelected = getIntent().getExtras().getParcelable("recipeObject");
             mTabPosition = getIntent().getExtras().getInt("tabPosition");
         }
@@ -53,13 +57,22 @@ public class DetailsActivity extends AppCompatActivity {
     private void setupDetailsFragmentForPhone() {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
+        mDetailsFragment = (DetailsFragment) fragmentManager.findFragmentByTag(TAG_DETAILS_FRAGMENT);
 
-        DetailsFragment detailsFragment = DetailsFragment.newInstance(mTabPosition);
-        detailsFragment.setRecipeSelected(mRecipeSelected);
+        if(mDetailsFragment == null) {
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.details_fragment_container, detailsFragment)
-                .commit();
+            mDetailsFragment = DetailsFragment.newInstance(mTabPosition);
+            mDetailsFragment.setRecipeSelected(mRecipeSelected);
+
+            fragmentManager.beginTransaction()
+                    .add(R.id.details_fragment_container, mDetailsFragment, TAG_DETAILS_FRAGMENT)
+                    .commit();
+        } else {
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.details_fragment_container, mDetailsFragment, TAG_DETAILS_FRAGMENT)
+                    .commit();
+        }
     }
 
     /*

@@ -180,7 +180,7 @@ public class MediaPlayerUtils {
     private static void closeFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView,
                                               LinearLayout rootView, ImageView fullScreenIcon) {
 
-        ((ViewGroup) exoPlayerView.getParent()).removeView(exoPlayerView);
+        ((ViewGroup) exoPlayerView.getParent().getParent()).removeView(exoPlayerView);
         ((LinearLayout) rootView.findViewById(R.id.step_main_layout)).addView(exoPlayerView, 0);
 
         if(mTabletLayout) {

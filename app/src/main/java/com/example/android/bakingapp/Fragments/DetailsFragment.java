@@ -24,7 +24,9 @@ public class DetailsFragment extends Fragment {
      * Constants
      */
 
-    private static final String TAB_SELECTED_POSITION = "tab_selected_position";
+    private static final String TAB_SELECTED_POSITION_TAG = "tab_selected_position";
+    private static final String LAST_TAB_SELECTED_POSITION_KEY = "last_tab_selected";
+    private static final String TAG_RECIPE_SELECTED = "recipe_selected";
 
     /*
      * Fields
@@ -32,6 +34,8 @@ public class DetailsFragment extends Fragment {
 
     private Recipe mRecipeSelected;
     private ViewPager mViewPager;
+
+    // Data that will be kept
     private int mCurrentTabSelected = 0;
 
     /*
@@ -44,7 +48,6 @@ public class DetailsFragment extends Fragment {
      *
      * @param tabPosition The position of the tab that corresponds
      *                    to the step selected by the user
-     *
      * @return A DetailsFragment instance with extras
      */
     public static DetailsFragment newInstance(int tabPosition) {
@@ -53,12 +56,18 @@ public class DetailsFragment extends Fragment {
 
         // Set fragment's arguments
         Bundle args = new Bundle();
-        args.putInt(TAB_SELECTED_POSITION, tabPosition);
+        args.putInt(TAB_SELECTED_POSITION_TAG, tabPosition);
         detailsFragment.setArguments(args);
 
         return detailsFragment;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // retain the fragment
+        setRetainInstance(true);
+    }
 
     @Nullable
     @Override
@@ -66,9 +75,17 @@ public class DetailsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.details_fragment, container, false);
 
-        mCurrentTabSelected = getArguments().getInt(TAB_SELECTED_POSITION);
+        mCurrentTabSelected = getArguments().getInt(TAB_SELECTED_POSITION_TAG);
 
-        if(mRecipeSelected != null) {
+        // Restore fragment state after rotation
+        if (savedInstanceState != null
+                && savedInstanceState.containsKey(LAST_TAB_SELECTED_POSITION_KEY)
+                && savedInstanceState.containsKey(TAG_RECIPE_SELECTED)) {
+            mCurrentTabSelected = savedInstanceState.getInt(TAB_SELECTED_POSITION_TAG);
+            mRecipeSelected = savedInstanceState.getParcelable(TAG_RECIPE_SELECTED);
+        }
+
+        if (mRecipeSelected != null) {
             setupTabs(rootView);
         }
 
@@ -85,12 +102,35 @@ public class DetailsFragment extends Fragment {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
+        setTabOnClickListener();
 
         // Give the TabLayout the ViewPager
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.details_sliding_tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        // Set the current tab selected
         mViewPager.setCurrentItem(mCurrentTabSelected);
+    }
+
+    /**
+     * Assigns a click listener to update the variable that holds
+     * the position of the tab currently selected
+     */
+    private void setTabOnClickListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mCurrentTabSelected = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     /*
@@ -99,5 +139,19 @@ public class DetailsFragment extends Fragment {
 
     public void setRecipeSelected(Recipe recipeSelected) {
         mRecipeSelected = recipeSelected;
+    }
+
+    /*
+     * Lifecycle methods
+     */
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+
+        // Save data
+        outState.putInt(LAST_TAB_SELECTED_POSITION_KEY, mCurrentTabSelected);
+        outState.putParcelable(TAG_RECIPE_SELECTED, mRecipeSelected);
+
+        super.onSaveInstanceState(outState);
     }
 }

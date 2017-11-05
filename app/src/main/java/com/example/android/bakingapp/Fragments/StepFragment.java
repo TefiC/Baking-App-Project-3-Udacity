@@ -24,14 +24,18 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 public class StepFragment extends Fragment {
 
     /*
+     * Constants
+     */
+
+    private static final String RECIPE_STEP_KEY = "recipe_step";
+
+    /*
      * Fields
      */
 
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private FrameLayout mFullScreenButton;
-
-    private static final String RECIPE_STEP_KEY = "recipe_step";
 
     /*
      * Methods
@@ -41,9 +45,9 @@ public class StepFragment extends Fragment {
 
         StepFragment stepFragment = new StepFragment();
 
+        // Adds arguments
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_STEP_KEY, recipeStep);
-
         stepFragment.setArguments(args);
 
         return stepFragment;
@@ -58,19 +62,20 @@ public class StepFragment extends Fragment {
 
         SimpleExoPlayerView simpleExoPlayerView = rootView.findViewById(R.id.step_exoplayer_view);
 
-
         if(!mStep.getStepVideoUrl().equals("")) {
             MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), simpleExoPlayerView, mExoPlayer);
         } else {
             simpleExoPlayerView.setVisibility(View.GONE);
         }
 
-
         TextView textView = rootView.findViewById(R.id.step_text_view);
         textView.setText(mStep.getStepDescription());
 
-        MediaPlayerUtils.initFullscreenDialog(getActivity(), simpleExoPlayerView, (LinearLayout) rootView);
-        MediaPlayerUtils.initFullscreenButton(getActivity(), simpleExoPlayerView, (LinearLayout) rootView);
+        // Initialize media player
+        MediaPlayerUtils.initFullscreenDialog(getActivity(), simpleExoPlayerView,
+                (LinearLayout) rootView.findViewById(R.id.step_main_layout));
+        MediaPlayerUtils.initFullscreenButton(getActivity(), simpleExoPlayerView,
+                (LinearLayout) rootView.findViewById(R.id.step_main_layout));
 
         return rootView;
     }
