@@ -78,4 +78,10 @@ public class StepFragment extends Fragment {
     public void setStepSelected(Step step) {
         mStep = step;
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MediaPlayerUtils.releaseExoPlayer(mExoPlayer);
+    }
 }

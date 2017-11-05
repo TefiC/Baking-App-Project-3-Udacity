@@ -44,18 +44,24 @@ public class MediaPlayerUtils {
      * Methods
      */
 
+    /**
+     * Initializes Exoplayer on a SimpleExoPlayerView
+     *
+     * @param context The context
+     * @param videoUrlString The URL to fetch the video that will be played by ExoPlayer
+     * @param playerView The view where the video will be displayed
+     * @param exoPlayer An ExoPlayer instance
+     */
     public static void initializeExoPlayer(Context context, String videoUrlString,
                                            SimpleExoPlayerView playerView, SimpleExoPlayer exoPlayer) {
 
         if (exoPlayer == null && !videoUrlString.equals("")) {
 
             TrackSelector trackSelector = new DefaultTrackSelector();
-
             exoPlayer = ExoPlayerFactory.newSimpleInstance(context,
                     trackSelector);
 
             playerView.setPlayer(exoPlayer);
-
             MediaSource mediaSource = setupMediaSource(context, videoUrlString);
 
             exoPlayer.prepare(mediaSource);
@@ -63,6 +69,27 @@ public class MediaPlayerUtils {
         }
     }
 
+    /**
+     * Stops and releases an instance of SimpleExoPlayer
+     *
+     * @param simpleExoPlayer An instance of SimpleExoPlayer
+     */
+    public static void releaseExoPlayer(SimpleExoPlayer simpleExoPlayer) {
+        if(simpleExoPlayer != null) {
+            simpleExoPlayer.stop();
+            simpleExoPlayer.release();
+            simpleExoPlayer = null;
+        }
+    }
+
+    /**
+     * Sets up the media source that will be displayed by ExoPlayer
+     *
+     * @param context The Context
+     * @param videoUrlString The URL of the video that will be displayed
+     *
+     * @return A MediaSource from an HTTP resource
+     */
     private static MediaSource setupMediaSource(Context context, String videoUrlString) {
         // Setup Media Source
         String userAgent = Util.getUserAgent(context, "BakingApp");
@@ -77,6 +104,13 @@ public class MediaPlayerUtils {
      * Full Screen
      */
 
+    /**
+     * Initializes a full screen dialog
+     *
+     * @param context The Context
+     * @param exoPlayerView A SimpleExoPlayerView
+     * @param rootView The RootView where the dialog will be attached
+     */
     public static void initFullscreenDialog(final Context context, final SimpleExoPlayerView exoPlayerView,
                                              final LinearLayout rootView) {
 
@@ -93,6 +127,13 @@ public class MediaPlayerUtils {
         };
     }
 
+    /**
+     * Initializes full screen button in ExoPlayer's control panel
+     *
+     * @param context The Context
+     * @param simpleExoPlayerView A view for the ExoPlayer
+     * @param rootView The layout's root view
+     */
     public static void initFullscreenButton(final Context context, final SimpleExoPlayerView simpleExoPlayerView,
                                             final LinearLayout rootView) {
 
@@ -111,6 +152,13 @@ public class MediaPlayerUtils {
         });
     }
 
+    /**
+     * Opens a full screen dialog to display a video in full screen
+     *
+     * @param context The Context
+     * @param exoPlayerView The ExoPlayer view
+     * @param fullScreenIcon The full screen icon view
+     */
     private static void openFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView, ImageView fullScreenIcon) {
 
         ((ViewGroup) exoPlayerView.getParent()).removeView(exoPlayerView);
@@ -120,6 +168,15 @@ public class MediaPlayerUtils {
         mFullScreenDialog.show();
     }
 
+    /**
+     * Closes a full screen dialog, placing the video in its original container with
+     * its original dimensions
+     *
+     * @param context The Context
+     * @param exoPlayerView ExoPlayer's view
+     * @param rootView The layout's root view
+     * @param fullScreenIcon ExoPlayer's full screen icon view
+     */
     private static void closeFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView,
                                               LinearLayout rootView, ImageView fullScreenIcon) {
 

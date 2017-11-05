@@ -40,7 +40,7 @@ public class DetailsActivity extends AppCompatActivity {
             mTabPosition = getIntent().getExtras().getInt("tabPosition");
         }
 
-        if(MainActivity.mTabletLayout) {
+        if (MainActivity.mTabletLayout) {
             setupStepsFragmentsForTablet();
         } else {
             setupDetailsFragmentForPhone();
@@ -51,6 +51,7 @@ public class DetailsActivity extends AppCompatActivity {
      * Creates and assigns the details fragment for a phone layout
      */
     private void setupDetailsFragmentForPhone() {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         DetailsFragment detailsFragment = DetailsFragment.newInstance(mTabPosition);
