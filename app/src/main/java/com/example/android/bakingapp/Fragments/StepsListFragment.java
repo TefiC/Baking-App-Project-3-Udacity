@@ -20,6 +20,10 @@ import com.example.android.bakingapp.RecipesData.Step;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
 
 /**
@@ -30,11 +34,19 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
                                                             StepsListAdapter.IngredientOnClickHandler {
 
     /*
+     * Views
+     */
+
+    @BindView(R.id.steps_list_recycler_view) RecyclerView mStepListRecyclerView;
+
+    /*
      * Fields
      */
 
     private Recipe mRecipeSelected;
     private static final String RECIPE_KEY = "recipe_key";
+
+    private Unbinder unbinder;
 
     /*
      * Methods
@@ -67,21 +79,19 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.steps_list_fragment, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.steps_list_recycler_view);
-        setStepsAdapter(recyclerView);
-
+        setStepsAdapter(mStepListRecyclerView);
         return rootView;
     }
 
     private void setStepsAdapter(RecyclerView rootView) {
-        RecyclerView recyclerView = rootView.findViewById(R.id.steps_list_recycler_view);
 
         // Create and apply the layout manager
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLinearLayoutManager);
+        rootView.setLayoutManager(mLinearLayoutManager);
 
-        recyclerView.setAdapter(new StepsListAdapter(getActivity(),
+        rootView.setAdapter(new StepsListAdapter(getActivity(),
                 mRecipeSelected.getRecipeSteps(),
                 mRecipeSelected.getRecipeIngredients(),
                 this,
@@ -121,5 +131,11 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
             intent.putExtra("recipeObject", mRecipeSelected);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

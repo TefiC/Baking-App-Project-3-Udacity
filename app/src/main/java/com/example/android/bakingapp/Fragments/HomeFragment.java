@@ -26,6 +26,10 @@ import com.example.android.bakingapp.Utils.NetworkUtils;
 
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
 import static com.example.android.bakingapp.Utils.NetworkUtils.RECIPES_INTERNET_LOADER_ID;
 import static com.example.android.bakingapp.Utils.RecipeDataUtils.fillRecipesArray;
@@ -37,10 +41,17 @@ import static com.example.android.bakingapp.Utils.RecipeDataUtils.fillRecipesArr
 public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeAdapterOnClickHandler {
 
     /*
+     * Views
+     */
+
+    @BindView(R.id.main_recipes_grid_layout) RecyclerView mMainListRecyclerView;
+
+    /*
      * Fields
      */
 
     private View mRootView;
+    private Unbinder unbinder;
 
     /*
      * Methods
@@ -58,7 +69,11 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.home_fragment, container, false);
+
+        unbinder = ButterKnife.bind(this, mRootView);
+
         fetchRecipesFromInternet(getActivity(), getLoaderManager());
+
 
         return mRootView;
     }
@@ -68,16 +83,14 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
      */
     private void setMainActivityAdapter() {
 
-        RecyclerView mainListRecyclerView = (RecyclerView) mRootView.findViewById(R.id.main_recipes_grid_layout);
-
         // Layout Manager
-        setMainActivityLayoutManager(mainListRecyclerView);
+        setMainActivityLayoutManager(mMainListRecyclerView);
 
         // Create and set the adapter
         RecipesMainAdapter recipesMainAdapter = new RecipesMainAdapter(getActivity(), RecipesListFragment.mRecipesArray, this);
 
         if (RecipesListFragment.mRecipesArray.size() > 0) {
-            mainListRecyclerView.setAdapter(recipesMainAdapter);
+            mMainListRecyclerView.setAdapter(recipesMainAdapter);
         }
     }
 
@@ -174,5 +187,11 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
         } else {
             loaderManager.restartLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

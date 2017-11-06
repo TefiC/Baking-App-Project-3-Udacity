@@ -17,11 +17,23 @@ import com.example.android.bakingapp.Utils.MediaPlayerUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Fragment to display a recipe step
  */
 
 public class StepFragment extends Fragment {
+
+    /*
+     * View
+     */
+
+    @BindView(R.id.step_exoplayer_view) SimpleExoPlayerView mSimpleExoPlayerView;
+    @BindView(R.id.step_text_view) TextView mStepTextView;
+    @BindView(R.id.step_main_layout) LinearLayout mStepMainLayout;
 
     /*
      * Constants
@@ -36,6 +48,8 @@ public class StepFragment extends Fragment {
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private FrameLayout mFullScreenButton;
+
+    private Unbinder unbinder;
 
     /*
      * Methods
@@ -57,25 +71,21 @@ public class StepFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_fragment, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
 
         mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
 
-        SimpleExoPlayerView simpleExoPlayerView = rootView.findViewById(R.id.step_exoplayer_view);
-
         if(!mStep.getStepVideoUrl().equals("")) {
-            MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), simpleExoPlayerView, mExoPlayer);
+            MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), mSimpleExoPlayerView, mExoPlayer);
         } else {
-            simpleExoPlayerView.setVisibility(View.GONE);
+            mSimpleExoPlayerView.setVisibility(View.GONE);
         }
 
-        TextView textView = rootView.findViewById(R.id.step_text_view);
-        textView.setText(mStep.getStepDescription());
+        mStepTextView.setText(mStep.getStepDescription());
 
         // Initialize media player
-        MediaPlayerUtils.initFullscreenDialog(getActivity(), simpleExoPlayerView,
-                (LinearLayout) rootView.findViewById(R.id.step_main_layout));
-        MediaPlayerUtils.initFullscreenButton(getActivity(), simpleExoPlayerView,
-                (LinearLayout) rootView.findViewById(R.id.step_main_layout));
+        MediaPlayerUtils.initFullscreenDialog(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
+        MediaPlayerUtils.initFullscreenButton(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
 
         return rootView;
     }
@@ -88,5 +98,11 @@ public class StepFragment extends Fragment {
     public void onStop() {
         super.onStop();
         MediaPlayerUtils.releaseExoPlayer(mExoPlayer);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

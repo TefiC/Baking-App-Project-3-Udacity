@@ -12,6 +12,10 @@ import android.widget.TextView;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Fragment to display favorite recipes
  */
@@ -19,10 +23,17 @@ import com.example.android.bakingapp.RecipesData.Recipe;
 public class FavoritesFragment extends Fragment {
 
     /*
+     * Views
+     */
+
+    @BindView(R.id.main_favorite_recipes_layout) TextView mMainRecipesLayout;
+
+    /*
      * Fields
      */
 
     private String[] mFavoriteRecipesNames;
+    private Unbinder unbinder;
 
     /*
      * Methods
@@ -36,9 +47,9 @@ public class FavoritesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.favorites_fragment, container, false);
+        unbinder = ButterKnife.bind(this, rootView);
 
-        TextView textView = rootView.findViewById(R.id.main_favorite_recipes_layout);
-        textView.setText("FAVORITE RECIPES");
+        mMainRecipesLayout.setText("FAVORITE RECIPES");
 
         return rootView;
     }
@@ -53,5 +64,11 @@ public class FavoritesFragment extends Fragment {
 
     private void setFavoriteRecipesAdapter() {
         // SET ADAPTER
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

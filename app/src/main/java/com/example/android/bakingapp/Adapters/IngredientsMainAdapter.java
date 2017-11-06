@@ -13,6 +13,9 @@ import com.example.android.bakingapp.RecipesData.Ingredient;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * An adapter for the ingredients list
  */
@@ -73,16 +76,14 @@ public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMain
          * Fields
          */
 
-        private TextView mIngredientNumberView;
-        private TextView mIngredientNameView;
-        private TextView mIngredientQuantityUnitView;
+        @BindView(R.id.ingredient_item_number) TextView mIngredientNumberView;
+        @BindView(R.id.ingredient_item_name) TextView mIngredientNameView;
+        @BindView(R.id.ingredient_item_quantity_unit) TextView mIngredientQuantityUnitView;
 
         public IngredientViewHolder(View itemView) {
             super(itemView);
 
-            mIngredientNumberView = itemView.findViewById(R.id.ingredient_item_number);
-            mIngredientNameView = itemView.findViewById(R.id.ingredient_item_name);
-            mIngredientQuantityUnitView = itemView.findViewById(R.id.ingredient_item_quantity_unit);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

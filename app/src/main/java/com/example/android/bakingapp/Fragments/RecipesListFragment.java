@@ -15,6 +15,10 @@ import com.example.android.bakingapp.RecipesData.Recipe;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Fragment that displays a list of recipes
  */
@@ -22,10 +26,18 @@ import java.util.ArrayList;
 public class RecipesListFragment extends Fragment {
 
     /*
+     * Views
+     */
+
+    @BindView(R.id.viewpager) ViewPager mViewPager;
+    @BindView(R.id.sliding_tabs) TabLayout mTabLayout;
+
+    /*
      * Fields
      */
 
     public static ArrayList<Recipe> mRecipesArray = new ArrayList<Recipe>();
+    private Unbinder unbinder;
 
     private View mRootView;
 
@@ -38,6 +50,8 @@ public class RecipesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mRootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
+        unbinder = ButterKnife.bind(this, mRootView);
+
         setupTabs(mRootView);
 
         return mRootView;
@@ -50,12 +64,10 @@ public class RecipesListFragment extends Fragment {
      */
     private void setupTabs(View rootView) {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
-        viewPager.setAdapter(new MainPagerAdapter(getActivity().getSupportFragmentManager(), getActivity()));
+        mViewPager.setAdapter(new MainPagerAdapter(getActivity().getSupportFragmentManager(), getActivity()));
 
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
     }
 
     /**
@@ -66,5 +78,11 @@ public class RecipesListFragment extends Fragment {
      */
     private static boolean favoritesExist() {
         return true;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

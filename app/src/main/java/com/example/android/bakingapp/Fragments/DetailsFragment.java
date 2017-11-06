@@ -14,11 +14,23 @@ import com.example.android.bakingapp.Adapters.DetailsPagerAdapter;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Fragment to display the details of the recipe selected by the user
  */
 
 public class DetailsFragment extends Fragment {
+
+    /*
+     * Views
+     */
+
+    @BindView(R.id.viewpager) ViewPager mViewPager;
+    @BindView(R.id.details_sliding_tabs) TabLayout mSlidingTabs;
+
 
     /*
      * Constants
@@ -33,7 +45,8 @@ public class DetailsFragment extends Fragment {
      */
 
     private Recipe mRecipeSelected;
-    private ViewPager mViewPager;
+
+    private Unbinder unbinder;
 
     // Data that will be kept
     private int mCurrentTabSelected = 0;
@@ -75,6 +88,8 @@ public class DetailsFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.details_fragment, container, false);
 
+        unbinder = ButterKnife.bind(this, rootView);
+
         mCurrentTabSelected = getArguments().getInt(TAB_SELECTED_POSITION_TAG);
 
         // Restore fragment state after rotation
@@ -99,14 +114,14 @@ public class DetailsFragment extends Fragment {
      */
     private void setupTabs(View rootView) {
 
+
+
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        mViewPager = (ViewPager) rootView.findViewById(R.id.viewpager);
         mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
         setTabOnClickListener();
 
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.details_sliding_tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        mSlidingTabs.setupWithViewPager(mViewPager);
 
         // Set the current tab selected
         mViewPager.setCurrentItem(mCurrentTabSelected);
@@ -153,5 +168,11 @@ public class DetailsFragment extends Fragment {
         outState.putParcelable(TAG_RECIPE_SELECTED, mRecipeSelected);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

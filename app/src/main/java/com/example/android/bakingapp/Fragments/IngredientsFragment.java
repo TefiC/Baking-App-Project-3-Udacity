@@ -19,11 +19,23 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Fragment to display recipe ingredients
  */
 
 public class IngredientsFragment extends Fragment {
+
+    /*
+     * Views
+     */
+
+    @BindView(R.id.ingredients_recipe_image) ImageView mRecipeImageView;
+    @BindView(R.id.ingredients_recipe_name) TextView mRecipeNameView;
+    @BindView(R.id.ingredients_recycler_view) RecyclerView mIngredientsRecyclerView;
 
     /*
      * Fields
@@ -36,6 +48,8 @@ public class IngredientsFragment extends Fragment {
     private static final String INGREDIENTS_ARRAY_KEY = "ingredients_array";
     private static final String RECIPE_NAME_KEY = "recipe_name";
     private static final String RECIPE_IMAGE_KEY = "recipe_image";
+
+    private Unbinder unbinder;
 
     /*
      * Methods
@@ -82,16 +96,14 @@ public class IngredientsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.ingredients_fragment, container, false);
-
-        ImageView recipeImageView = rootView.findViewById(R.id.ingredients_recipe_image);
-        TextView recipeNameView = rootView.findViewById(R.id.ingredients_recipe_name);
+        unbinder = ButterKnife.bind(this, rootView);
 
         // Populate data
-        loadRecipeImage(recipeImageView);
-        recipeNameView.setText(mRecipeName);
+        loadRecipeImage(mRecipeImageView);
+        mRecipeNameView.setText(mRecipeName);
 
         // Adapter
-        setIngredientsAdapter(rootView);
+        setIngredientsAdapter();
 
         return rootView;
     }
@@ -113,16 +125,19 @@ public class IngredientsFragment extends Fragment {
 
     /**
      * Sets the ingredients RecyclerView adapter
-     *
-     * @param rootView The Ingredients root view
      */
-    private void setIngredientsAdapter(View rootView) {
-        RecyclerView recyclerView = rootView.findViewById(R.id.ingredients_recycler_view);
+    private void setIngredientsAdapter() {
 
         // Create and apply the layout manager
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(mLinearLayoutManager);
+        mIngredientsRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        recyclerView.setAdapter(new IngredientsMainAdapter(getActivity(), mIngredientsArray));
+        mIngredientsRecyclerView.setAdapter(new IngredientsMainAdapter(getActivity(), mIngredientsArray));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

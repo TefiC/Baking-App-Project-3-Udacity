@@ -11,6 +11,8 @@ import com.example.android.bakingapp.Fragments.StepsListFragment;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
 
+import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
+
 /**
  * Details activity for phone layout
  */
@@ -39,12 +41,16 @@ public class DetailsActivity extends AppCompatActivity {
         // Remove action bar shadow and elevation
         getSupportActionBar().setElevation(0);
 
-        if (getIntent().hasExtra("recipeObject") && getIntent().hasExtra("tabPosition")) {
+        if (getIntent().hasExtra("recipeObject")) {
             mRecipeSelected = getIntent().getExtras().getParcelable("recipeObject");
+        }
+
+        // For phone layouts
+        if(getIntent().hasExtra("tabPosition")) {
             mTabPosition = getIntent().getExtras().getInt("tabPosition");
         }
 
-        if (MainActivity.mTabletLayout) {
+        if (mTabletLayout) {
             setupStepsFragmentsForTablet();
         } else {
             setupDetailsFragmentForPhone();

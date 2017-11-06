@@ -13,6 +13,9 @@ import com.example.android.bakingapp.RecipesData.Step;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  *
  */
@@ -95,12 +98,12 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
          * Fields
          */
 
-        private TextView mStepCardTitle;
+        @BindView(R.id.step_card_title) TextView mStepCardTitle;
 
         public StepViewHolder(View itemView) {
             super(itemView);
 
-            mStepCardTitle = itemView.findViewById(R.id.step_card_title);
+            ButterKnife.bind(this, itemView);
         }
 
         /**
