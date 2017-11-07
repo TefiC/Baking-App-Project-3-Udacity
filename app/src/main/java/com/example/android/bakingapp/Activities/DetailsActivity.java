@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.bakingapp.Fragments.DetailsFragment;
@@ -13,6 +15,7 @@ import com.example.android.bakingapp.Fragments.StepFragment;
 import com.example.android.bakingapp.Fragments.StepsListFragment;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
+import com.example.android.bakingapp.Widgets.WidgetUtils;
 
 import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
 
@@ -114,11 +117,25 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    /*
+     * Menu
+     */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.details_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
+        } else if (id == R.id.menu_widget) {
+            item.setChecked(!item.isChecked());
+            WidgetUtils.updateWidgetsData(this, mRecipeSelected);
+            Log.v("MENU", "CLICKED ON MENU");
         }
         return super.onOptionsItemSelected(item);
     }
