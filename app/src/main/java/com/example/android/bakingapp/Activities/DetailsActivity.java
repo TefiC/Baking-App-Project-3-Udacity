@@ -3,7 +3,10 @@ package com.example.android.bakingapp.Activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 
 import com.example.android.bakingapp.Fragments.DetailsFragment;
 import com.example.android.bakingapp.Fragments.StepFragment;
@@ -54,6 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
             setupStepsFragmentsForTablet();
         } else {
             setupDetailsFragmentForPhone();
+            showUpButton();
         }
     }
 
@@ -98,5 +102,24 @@ public class DetailsActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .add(R.id.steps_list_fragment_view, stepsListFragment)
                 .commit();
+    }
+
+    /*
+     * Displays an Up button
+     */
+    private void showUpButton() {
+        ActionBar actionBar = this.getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

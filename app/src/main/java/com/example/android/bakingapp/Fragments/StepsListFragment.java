@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     private static final String RECIPE_KEY = "recipe_key";
 
     private Unbinder unbinder;
+    private View mRootView;
 
     /*
      * Methods
@@ -78,11 +80,13 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.steps_list_fragment, container, false);
-        unbinder = ButterKnife.bind(this, rootView);
+        mRootView = inflater.inflate(R.layout.steps_list_fragment, container, false);
+        unbinder = ButterKnife.bind(this, mRootView);
+
+        Log.v("CREATING FRAGMENT", "NOW");
 
         setStepsAdapter(mStepListRecyclerView);
-        return rootView;
+        return mRootView;
     }
 
     private void setStepsAdapter(RecyclerView rootView) {
