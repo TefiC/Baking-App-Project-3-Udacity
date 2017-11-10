@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Ingredient;
+import com.example.android.bakingapp.Utils.RecipeDataUtils;
 
 import java.util.ArrayList;
 
@@ -61,7 +62,7 @@ public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMain
         Ingredient ingredient = mIngredientsList.get(position);
 
         holder.mIngredientNumberView.setText(Integer.toString(position + 1));
-        holder.mIngredientNameView.setText(ingredient.getIngredientName());
+        holder.mIngredientNameView.setText(RecipeDataUtils.capitalizeString(ingredient.getIngredientName()));
         holder.mIngredientQuantityUnitView.setText(ingredient.getIngredientQuantity() + " " + ingredient.getIngredientUnit());
     }
 

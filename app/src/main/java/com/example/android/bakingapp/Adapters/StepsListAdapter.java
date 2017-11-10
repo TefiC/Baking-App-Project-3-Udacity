@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
@@ -21,6 +23,14 @@ import butterknife.ButterKnife;
  */
 
 public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.StepViewHolder>  {
+
+    /*
+     * Constants
+     */
+
+    private static final String INGREDIENTS_CARD_TITLE = "Ingredients";
+    private static final String INTRODUCTION_CARD_TITLE = "Introduction";
+    private static final String STEP_CARD_TITLE = "Step";
 
     /*
      * Fields
@@ -59,7 +69,7 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
         int layoutIdItem = R.layout.step_item;
         boolean shouldAttachToParentImmediately = false;
 
-        TextView view = (TextView) layoutInflater.inflate(layoutIdItem, parent, shouldAttachToParentImmediately);
+        LinearLayout view = (LinearLayout) layoutInflater.inflate(layoutIdItem, parent, shouldAttachToParentImmediately);
 
         return new StepViewHolder(view);
     }
@@ -69,21 +79,31 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
 
         Step step = null;
 
+        // If the position is not 0, it's a step, not ingredients
         if(position > 0) {
             step = mStepsArrayList.get(position - 1);
+            if(!step.getStepVideoUrl().equals("")) {
+                holder.mStepCardVideo.setVisibility(View.VISIBLE);
+            }
         }
 
-        TextView textView = holder.mStepCardTitle;
+        // Get the main root view
+        LinearLayout mainLayout = holder.mStepCardMainLayout;
 
+        // Get the text views
+        TextView titleView = holder.mStepCardTitle;
+        TextView descriptionView = holder.mStepCardDescription;
+
+        // If it's the first item (ingredients)
         if(position == 0) {
-            holder.setIngredientsOnClickListener(textView, mIngredientsArrayList, position);
-            textView.setText("Ingredients");
+            holder.setIngredientsOnClickListener(mainLayout, mIngredientsArrayList, position);
+            titleView.setText(INGREDIENTS_CARD_TITLE);
+        // Else, if it's the introduction step
         } else if (position == 1) {
-            holder.setStepOnClickListener(textView, step, position);
-            textView.setText("Introduction");
+            setStepItemUI(holder, mainLayout, step, position, titleView, descriptionView, INTRODUCTION_CARD_TITLE);
+        // Else, if it's a generic step
         } else if (position > 1 && position < getItemCount()) {
-            holder.setStepOnClickListener(textView, step, position);
-            textView.setText("Step " + (position - 1));
+            setStepItemUI(holder, mainLayout, step, position, titleView, descriptionView, STEP_CARD_TITLE);
         }
     }
 
@@ -98,7 +118,12 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
          * Fields
          */
 
+        @BindView(R.id.step_card_main_layout) LinearLayout mStepCardMainLayout;
+
         @BindView(R.id.step_card_title) TextView mStepCardTitle;
+        @BindView(R.id.step_card_description) TextView mStepCardDescription;
+        @BindView(R.id.step_card_video) ImageView mStepCardVideo;
+        @BindView(R.id.step_card_arrow) ImageView mStepCardArrow;
 
         public StepViewHolder(View itemView) {
             super(itemView);
@@ -114,7 +139,7 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
          * @param stepView The view on which to set the listener
          * @param step     The data that will be sent to the onClick method
          */
-        private void setStepOnClickListener(TextView stepView, final Step step, final int position) {
+        private void setStepOnClickListener(LinearLayout stepView, final Step step, final int position) {
             stepView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -131,7 +156,7 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
          * @param stepView The view on which to set the listener
          * @param ingredient     The data that will be sent to the onClick method
          */
-        private void setIngredientsOnClickListener(TextView stepView, final ArrayList<Ingredient> ingredient, final int position) {
+        private void setIngredientsOnClickListener(LinearLayout stepView, final ArrayList<Ingredient> ingredient, final int position) {
             stepView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -144,6 +169,50 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
     /*
      * UI interaction
      */
+
+    /**
+     * Sets up the Step item's UI by adding the text and onClickListener
+     *
+     * @param holder The view holder that will be updated
+     * @param mainLayout The main layout of the view holder
+     * @param step The corresponding step
+     * @param position The step position in the adapter
+     * @param titleView The title's text view
+     * @param descriptionView The description's text view
+     * @param cardTitle The step's title String
+     */
+    private void setStepItemUI(StepsListAdapter.StepViewHolder holder, LinearLayout mainLayout,
+                               Step step, int position, TextView titleView, TextView descriptionView,
+                               String cardTitle) {
+        // Set title
+        setCardTitle(cardTitle, titleView, position);
+        // Set onClickListener
+        holder.setStepOnClickListener(mainLayout, step, position);
+
+        // Set the description's text and visibility
+        descriptionView.setText(step.getStepShortDescription());
+        descriptionView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Sets the step card's corresponding title. If the cardTitle is INTRODUCTION_CARD_TITLE
+     * it sets it to that string value. Else, if it is STEP_CARD_TITLE it adds the step number
+     * to the end of the string
+     *
+     * @param cardTitle The card's title as a String
+     * @param titleView The title's text view
+     * @param position The integer representing the step's position in the adapter
+     */
+    private void setCardTitle(String cardTitle, TextView titleView, int position) {
+        switch (cardTitle) {
+            case INTRODUCTION_CARD_TITLE:
+                titleView.setText(cardTitle);
+                break;
+            case STEP_CARD_TITLE:
+                titleView.setText(STEP_CARD_TITLE + " " + (position - 1));
+                break;
+        }
+    }
 
     /**
      * Interface to implement onClick handler for each view

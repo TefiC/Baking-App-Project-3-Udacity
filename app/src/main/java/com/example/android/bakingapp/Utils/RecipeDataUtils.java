@@ -204,4 +204,30 @@ public class RecipeDataUtils {
                 dimensionInDp,
                 context.getResources().getDisplayMetrics());
     }
+
+    /**
+     * Capitalizes a string by converting its first character to uppercase
+     *
+     * @param string The string to capitalize
+     *
+     * @return The string capitalized
+     */
+    public static String capitalizeString(String string) {
+        return string.substring(0, 1).toUpperCase() + string.substring(1, string.length());
+    }
+
+    /**
+     * Formats a recipe's step by removing a possible initial number at the start of the string
+     *
+     * @param stepDescription The step's description
+     *
+     * @return The Step's description without the initial number
+     */
+    public static String formatStepDescription(String stepDescription) {
+        if(Character.isDigit(stepDescription.charAt(0))) {
+            return stepDescription.substring(2, stepDescription.length());
+        } else {
+            return stepDescription;
+        }
+    }
 }

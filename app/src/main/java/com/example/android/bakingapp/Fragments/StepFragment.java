@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Step;
 import com.example.android.bakingapp.Utils.MediaPlayerUtils;
+import com.example.android.bakingapp.Utils.RecipeDataUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
@@ -34,6 +36,7 @@ public class StepFragment extends Fragment {
     @BindView(R.id.step_exoplayer_view) SimpleExoPlayerView mSimpleExoPlayerView;
     @BindView(R.id.step_text_view) TextView mStepTextView;
     @BindView(R.id.step_main_layout) LinearLayout mStepMainLayout;
+    @BindView(R.id.default_step_image) ImageView mStepDefaultImageView;
 
     /*
      * Constants
@@ -76,12 +79,13 @@ public class StepFragment extends Fragment {
         mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
 
         if(!mStep.getStepVideoUrl().equals("")) {
+            mSimpleExoPlayerView.setVisibility(View.VISIBLE);
             MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), mSimpleExoPlayerView, mExoPlayer);
         } else {
-            mSimpleExoPlayerView.setVisibility(View.GONE);
+            mStepDefaultImageView.setVisibility(View.VISIBLE);
         }
 
-        mStepTextView.setText(mStep.getStepDescription());
+        mStepTextView.setText(RecipeDataUtils.formatStepDescription(mStep.getStepDescription()));
 
         // Initialize media player
         MediaPlayerUtils.initFullscreenDialog(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
@@ -98,6 +102,14 @@ public class StepFragment extends Fragment {
     public void onStop() {
         super.onStop();
         MediaPlayerUtils.releaseExoPlayer(mExoPlayer);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mExoPlayer != null) {
+            mExoPlayer.stop();
+        }
     }
 
     @Override
