@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
@@ -59,7 +59,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
         int layoutIdItem = R.layout.recipe_item;
         boolean shouldAttachToParentImmediately = false;
 
-        RelativeLayout view = (RelativeLayout) layoutInflater.inflate(layoutIdItem, parent, shouldAttachToParentImmediately);
+        LinearLayout view = (LinearLayout) layoutInflater.inflate(layoutIdItem, parent, shouldAttachToParentImmediately);
 
         return new RecipeViewHolder(view);
     }
@@ -89,7 +89,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
          * Views
          */
 
-        private RelativeLayout mRecipeCompleteView;
+        private LinearLayout mRecipeCompleteView;
 
         @BindView(R.id.recipe_item_name) TextView mRecipesNameView;
         @BindView(R.id.recipe_item_image) ImageView mRecipeImageView;
@@ -98,7 +98,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
         public RecipeViewHolder(View itemView) {
             super(itemView);
 
-            mRecipeCompleteView = (RelativeLayout) itemView;
+            mRecipeCompleteView = (LinearLayout) itemView;
 
             ButterKnife.bind(this, mRecipeCompleteView);
         }
@@ -111,7 +111,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
          * @param recipeView The view on which to set the listener
          * @param recipe     The data that will be sent to the onClick method
          */
-        private void setOnClickListener(RelativeLayout recipeView, final Recipe recipe) {
+        private void setOnClickListener(LinearLayout recipeView, final Recipe recipe) {
             recipeView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

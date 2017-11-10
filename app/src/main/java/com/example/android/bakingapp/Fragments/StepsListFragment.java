@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +54,13 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
      * Methods
      */
 
+    /**
+     * Creates a new instance of a StepsListFragment
+     *
+     * @param recipe The recipe selected by the user
+     *
+     * @return An instance of StepListFragment
+     */
     public static StepsListFragment newInstance(Recipe recipe) {
 
         StepsListFragment fragment = new StepsListFragment();
@@ -83,12 +90,15 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
         mRootView = inflater.inflate(R.layout.steps_list_fragment, container, false);
         unbinder = ButterKnife.bind(this, mRootView);
 
-        Log.v("CREATING FRAGMENT", "NOW");
-
         setStepsAdapter(mStepListRecyclerView);
         return mRootView;
     }
 
+    /**
+     * Sets up the steps adapter and a divider for its items
+     *
+     * @param rootView The root view that will be populated
+     */
     private void setStepsAdapter(RecyclerView rootView) {
 
         // Create and apply the layout manager
@@ -100,6 +110,11 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
                 mRecipeSelected.getRecipeIngredients(),
                 this,
                 this));
+
+        // Add a divider decoration
+        DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(rootView.getContext(),
+                mLinearLayoutManager.getOrientation());
+        rootView.addItemDecoration(mDividerItemDecoration);
     }
 
     @Override

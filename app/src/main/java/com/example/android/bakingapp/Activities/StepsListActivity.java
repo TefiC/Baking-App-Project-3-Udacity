@@ -38,7 +38,10 @@ public class StepsListActivity extends AppCompatActivity {
         if(getIntent().hasExtra("recipeObject")) {
             mRecipeObject = getIntent().getExtras().getParcelable("recipeObject");
             setupStepListFragment();
+            setTitle(getString(R.string.app_name) + " - " + mRecipeObject.getRecipeName());
         }
+
+
     }
 
     /*

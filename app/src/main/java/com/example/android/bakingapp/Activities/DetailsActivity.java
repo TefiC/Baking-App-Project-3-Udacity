@@ -49,6 +49,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         if (getIntent().hasExtra("recipeObject")) {
             mRecipeSelected = getIntent().getExtras().getParcelable("recipeObject");
+            setTitle(getString(R.string.app_name) + " - " + mRecipeSelected.getRecipeName());
         }
 
         // For phone layouts

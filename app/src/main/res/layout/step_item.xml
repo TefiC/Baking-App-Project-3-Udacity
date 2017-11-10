@@ -3,10 +3,7 @@
     android:id="@+id/step_card_title"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:background="@color/colorAccent"
     android:gravity="center"
-    android:layout_marginBottom="15dp"
-    android:textSize="24sp"
-    android:textColor="@android:color/white">
+    android:textSize="24sp">
 
 </TextView>

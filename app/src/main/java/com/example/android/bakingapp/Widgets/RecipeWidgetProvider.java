@@ -1,20 +1,12 @@
 package com.example.android.bakingapp.Widgets;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
-import com.example.android.bakingapp.Activities.DetailsActivity;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
-import com.squareup.picasso.Picasso;
-
-import static com.example.android.bakingapp.Activities.MainActivity.mContext;
 
 /**
  * Implementation of App Widget functionality.
@@ -26,46 +18,30 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
      */
 
     private static boolean isWidgetEmpty = true;
-    private static int UNIQUE_INTENT_CODE = 5;
+    public static int UNIQUE_INTENT_CODE = 5;
+
+    private static Recipe mRecipeSelected;
 
     /*
      * Methods
      */
 
     static void updateAppWidgets(Context context, AppWidgetManager appWidgetManager,
-                                Recipe recipeSelected, int[] appWidgetIds) {
+                                 Recipe recipeSelected, int[] appWidgetIds) {
 
-        if(recipeSelected == null) {
-
-            for(int appWidgetId : appWidgetIds) {
-                // Construct the RemoteViews object
-                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
-
-                views.setTextViewText(R.id.appwidget_text, "EMPTY");
-
-                // Instruct the widget manager to update the widget
-                appWidgetManager.updateAppWidget(appWidgetId, views);
-
-                isWidgetEmpty = true;
+        // If it's the first time creating a widget, the recipe is null
+        if (recipeSelected == null) {
+            // If there is no previous recipe stored in memory
+            if (mRecipeSelected != null) {
+                setNonEmptyWidgets(context, appWidgetIds, appWidgetManager, false);
+            // Else, if there is a previous recipe selected
+            } else {
+                setEmptyWidgetsUI(context, appWidgetIds, appWidgetManager);
             }
+        // Else, if it's an update to an existing widget
         } else {
-            for(int appWidgetId : appWidgetIds) {
-                // Construct the RemoteViews object
-                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
-
-                setWidgetUI(context, views, recipeSelected);
-
-                addWidgetOnClickListeners(context, views, recipeSelected);
-
-                // Instruct the widget manager to update the widget
-                appWidgetManager.updateAppWidget(appWidgetId, views);
-
-
-
-                displayWidgetUpdatedToast(context);
-
-                isWidgetEmpty = false;
-            }
+            mRecipeSelected = recipeSelected;
+            setNonEmptyWidgets(context, appWidgetIds, appWidgetManager, true);
         }
     }
 
@@ -85,53 +61,53 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    private static void setWidgetUI(Context context, RemoteViews views, Recipe recipeSelected) {
+    /**
+     * Sets up the UI for an empty widget with no recipe selected
+     *
+     * @param context The context
+     * @param appWidgetIds The widget ids
+     * @param appWidgetManager The widget manager
+     */
+    private static void setEmptyWidgetsUI(Context context, int[] appWidgetIds, AppWidgetManager appWidgetManager) {
+        for (int appWidgetId : appWidgetIds) {
+            // Construct the RemoteViews object
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 
-        // Data
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
+            views.setTextViewText(R.id.appwidget_text, "EMPTY");
+            WidgetUtils.addWidgetOnClickListeners(context, views, null);
 
-        // UI
-        views.setTextViewText(R.id.appwidget_text, recipeSelected.getRecipeName());
+            // Instruct the widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, views);
 
-        loadRecipeWidgetImage(context, views, recipeSelected);
-
-        views.setTextViewText(R.id.appwidget_servings, Integer.toString(recipeSelected.getRecipeServings()));
-
-    }
-
-    private static void addWidgetOnClickListeners(Context context, RemoteViews views, Recipe recipeSelected) {
-
-        // Create an Intent to launch DetailActivity when clicked
-        Intent intent = new Intent(context, DetailsActivity.class);
-        intent.putExtra("recipeObject", recipeSelected);
-        intent.putExtra("tabPosition", 0);
-
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                UNIQUE_INTENT_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if (recipeSelected != null) {
-            views.setOnClickPendingIntent(R.id.appwidget_main_layout, pendingIntent);
+            isWidgetEmpty = true;
         }
     }
 
-    private static void displayWidgetUpdatedToast(Context context) {
-        Toast.makeText(context, context.getString(R.string.widget_updated_toast_message), Toast.LENGTH_SHORT)
-                .show();
-    }
+    /**
+     * Sets the UI for non empty widgets, adds its onClickListener and displays a toast to
+     * the user that the widget has been set
+     *
+     * @param context The context
+     * @param appWidgetIds The Widgets Ids
+     * @param appWidgetManager The Widget manager
+     */
+    private static void setNonEmptyWidgets(Context context, int[] appWidgetIds,
+                                           AppWidgetManager appWidgetManager, boolean displayUIMessage) {
+        for (int appWidgetId : appWidgetIds) {
+            // Construct the RemoteViews object
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 
-    private static void loadRecipeWidgetImage(Context context, RemoteViews views, Recipe recipe) {
+            // Set UI nad listener
+            WidgetUtils.setWidgetUI(context, views, mRecipeSelected);
+            WidgetUtils.addWidgetOnClickListeners(context, views, mRecipeSelected);
 
-        if(recipe.getRecipeImage().substring(0, 6).equals("recipe")) {
-            int resourceId = context.getResources().getIdentifier(recipe.getRecipeImage(), "drawable", mContext.getPackageName());
-            views.setImageViewResource(R.id.appwidget_image, resourceId);
-        } else {
+            // Instruct the widget manager to update the widget
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
 
-            // Get widget manager
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
-
-            Picasso.with(context).load(recipe.getRecipeImage())
-                    .into(views, R.id.appwidget_image, appWidgetIds);
+        if(displayUIMessage) {
+            // Display toast
+            WidgetUtils.displayWidgetUpdatedToast(context);
         }
     }
 }
