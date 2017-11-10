@@ -22,17 +22,17 @@
     <TextView
         android:id="@+id/ingredient_item_name"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@id/ingredient_item_number"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
         android:paddingLeft="15dp"
+        android:gravity="center"
         android:textSize="16sp"
         android:layout_weight="6"
         android:background="#ffffff"/>
 
     <TextView
         android:id="@+id/ingredient_item_quantity_unit"
-        android:layout_toRightOf="@id/ingredient_item_name"
-        android:layout_alignParentRight="true"
+        android:padding="4dp"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"

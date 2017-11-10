@@ -2,6 +2,7 @@ package com.example.android.bakingapp.Utils;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -183,12 +184,24 @@ public class MediaPlayerUtils {
         ((ViewGroup) exoPlayerView.getParent()).removeView(exoPlayerView);
         ((LinearLayout) rootView.findViewById(R.id.step_main_layout)).addView(exoPlayerView, 0);
 
-        if(mTabletLayout) {
-            exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
+        // If the phone is in portrait orientation
+        if(context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if(mTabletLayout) {
+                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
+            } else {
+                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_phone_height), context)));
+            }
+
+        // If the phone is in landscape orientation
         } else {
-            exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_phone_height), context)));
+            if(mTabletLayout) {
+                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
+            } else {
+                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_phone_land_width), context), ViewGroup.LayoutParams.MATCH_PARENT, 1.5f));
+            }
         }
 
         mIsExoPlayerFullScreen = false;

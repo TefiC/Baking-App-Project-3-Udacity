@@ -2,6 +2,7 @@
 <resources>
     <integer name="exo_player_phone_height">250</integer>
     <integer name="exo_player_tablet_height">400</integer>
+    <integer name="exo_player_phone_land_width">0</integer>
 
     <!--
 Refer to App Widget Documentation for margin information
