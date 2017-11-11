@@ -149,15 +149,15 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
         }
 
         /**
-         * Sets an onClickListener to the step view, passing the step instance
+         * Sets an onClickListener to the ingredient view, passing the ingredient instance
          * to the onClick method of the StepsListAdapter interface to further customize
          * the actions to be performed on click
          *
-         * @param stepView The view on which to set the listener
+         * @param ingredientsView The view on which to set the listener
          * @param ingredient     The data that will be sent to the onClick method
          */
-        private void setIngredientsOnClickListener(LinearLayout stepView, final ArrayList<Ingredient> ingredient, final int position) {
-            stepView.setOnClickListener(new View.OnClickListener() {
+        private void setIngredientsOnClickListener(LinearLayout ingredientsView, final ArrayList<Ingredient> ingredient, final int position) {
+            ingredientsView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mIngredientOnClickHandler.onClick(ingredient, position);

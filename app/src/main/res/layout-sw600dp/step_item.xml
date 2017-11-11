@@ -42,8 +42,8 @@
 
         <ImageView
             android:id="@+id/step_card_video"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
             android:layout_gravity="center"
             android:src="@drawable/video"
             android:visibility="invisible" />

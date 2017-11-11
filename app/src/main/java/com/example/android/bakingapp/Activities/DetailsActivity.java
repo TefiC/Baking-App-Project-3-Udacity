@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.android.bakingapp.Fragments.DetailsFragment;
-import com.example.android.bakingapp.Fragments.StepFragment;
+import com.example.android.bakingapp.Fragments.IngredientsFragment;
 import com.example.android.bakingapp.Fragments.StepsListFragment;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
@@ -95,16 +95,20 @@ public class DetailsActivity extends AppCompatActivity {
     private void setupStepsFragmentsForTablet() {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        StepFragment detailsFragment = StepFragment.newInstance(mRecipeSelected.getRecipeSteps().get(0));
-
-        fragmentManager.beginTransaction()
-                .add(R.id.step_details_frame_layout, detailsFragment)
-                .commit();
-
+        // Display the list of steps
         StepsListFragment stepsListFragment = StepsListFragment.newInstance(mRecipeSelected);
 
         fragmentManager.beginTransaction()
                 .add(R.id.steps_list_fragment_view, stepsListFragment)
+                .commit();
+
+        // By default, display the ingredients details first
+        IngredientsFragment ingredientsFragment = IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(),
+                mRecipeSelected.getRecipeIngredients(),
+                mRecipeSelected.getRecipeImage());
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.step_details_frame_layout, ingredientsFragment)
                 .commit();
     }
 
