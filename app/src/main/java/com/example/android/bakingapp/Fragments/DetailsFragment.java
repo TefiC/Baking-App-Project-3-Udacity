@@ -114,8 +114,6 @@ public class DetailsFragment extends Fragment {
      */
     private void setupTabs(View rootView) {
 
-
-
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
         setTabOnClickListener();

@@ -3,5 +3,7 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
 
+    <string name="widget_name">FavoriteRecipe</string>
+
     <string name="widget_updated_toast_message">Recipe added to the Widget! :-)</string>
 </resources>

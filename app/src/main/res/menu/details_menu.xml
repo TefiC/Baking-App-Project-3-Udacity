@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/favorite_button"
+        android:orderInCategory="1"
+        android:title="Favorite"
+        android:icon="@drawable/favorite_not_selected"
+        app:showAsAction="ifRoom"/>
+
     <group android:checkableBehavior="all">
         <item
             android:id="@+id/menu_widget"

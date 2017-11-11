@@ -21,6 +21,8 @@ public class Recipe implements Parcelable {
     private int mServings;
     private String mImage;
 
+    private boolean mIsFavorite;
+
 
     /*
      * Constructors
@@ -40,6 +42,7 @@ public class Recipe implements Parcelable {
         mSteps = in.createTypedArrayList(Step.CREATOR);
         mServings = in.readInt();
         mImage = in.readString();
+        mIsFavorite = in.readInt() == 1;
     }
 
     /*
@@ -58,6 +61,7 @@ public class Recipe implements Parcelable {
         parcel.writeTypedList(mSteps);
         parcel.writeInt(mServings);
         parcel.writeString(mImage);
+        parcel.writeInt(mIsFavorite ? 1 : 0);
     }
 
     public static final Parcelable.Creator<Recipe> CREATOR = new Parcelable.Creator<Recipe>() {
@@ -81,6 +85,7 @@ public class Recipe implements Parcelable {
     public ArrayList<Step>  getRecipeSteps() { return mSteps; }
     public int getRecipeServings() { return mServings; }
     public String getRecipeImage() { return mImage; }
+    public boolean getIsFavorite() { return mIsFavorite; }
 
     /*
      * Setters
@@ -91,4 +96,5 @@ public class Recipe implements Parcelable {
     public void setRecipeSteps(ArrayList<Step>  steps) { mSteps = steps; }
     public void setRecipeServings(int servings) { mServings = servings; }
     public void setRecipeImage(String image) { mImage = image; }
+    public void setIsFavorite(boolean isFavorite) { mIsFavorite = isFavorite; }
 }

@@ -1,6 +1,7 @@
 package com.example.android.bakingapp.Utils;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.util.TypedValue;
 
 import com.example.android.bakingapp.Fragments.RecipesListFragment;
@@ -29,7 +30,7 @@ public class RecipeDataUtils {
      *
      * @param recipesJSONString Recipes data as a JSON string
      */
-    public static void fillRecipesArray(String recipesJSONString) {
+    public static void fillRecipesArray(Context context, String recipesJSONString) {
 
         try {
             JSONArray recipesJSON = new JSONArray(recipesJSONString);
@@ -37,6 +38,9 @@ public class RecipeDataUtils {
             for(int i = 0; i < recipesJSON.length(); i++) {
                 JSONObject recipe = recipesJSON.getJSONObject(i);
                 Recipe recipeObject = createRecipeObject(recipe);
+                recipeObject.setIsFavorite(FavoritesUtils.isRecipeFavorite(context, recipeObject,
+                        PreferenceManager.getDefaultSharedPreferences(context)));
+
                 RecipesListFragment.mRecipesArray.add(recipeObject);
             }
 

@@ -163,7 +163,7 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            fillRecipesArray(data);
+            fillRecipesArray(getActivity(), data);
             setMainActivityAdapter();
         }
 
