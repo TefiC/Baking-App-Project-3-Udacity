@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -29,8 +30,6 @@ public class WidgetUtils {
      */
 
     public static final String SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY = "recipeSelectedForWidgetName";
-    public static final String SHARED_PREFERENCES_RECIPE_URL_WIDGET_KEY = "recipeSelectedForWidgetImageURL";
-    public static final String SHARED_PREFERENCES_RECIPE_SERVINGS_WIDGET_KEY = "recipeSelectedForWidgetServings";
 
     /*
      * Methods
@@ -48,12 +47,16 @@ public class WidgetUtils {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
 
-        // Toggle recipe name to shared preferences
-        toggleWidgetSharedPreferences(context, recipeSelected.getRecipeName(),
-                recipeSelected.getRecipeImage(),
-                Integer.toString(recipeSelected.getRecipeServings()));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.appwidget_ingredients_list_view);
 
-        RecipeWidgetProvider.updateAppWidgets(context, appWidgetManager, recipeSelected, appWidgetIds);
+        // Toggle recipe name to shared preferences
+        boolean isWidgetEmpty = toggleWidgetSharedPreferences(context, recipeSelected.getRecipeName());
+
+        if(isWidgetEmpty) {
+            RecipeWidgetProvider.updateAppWidgets(context, appWidgetManager, null, appWidgetIds);
+        } else {
+            RecipeWidgetProvider.updateAppWidgets(context, appWidgetManager, recipeSelected, appWidgetIds);
+        }
     }
 
     /**
@@ -61,18 +64,14 @@ public class WidgetUtils {
      *
      * @param context The context
      * @param recipeName The recipe's name
-     * @param recipeURL The recipe's URL
-     * @param recipeServings The recipe's servings
+     *
+     * @return True if the widget is now empty. False if it isn't.
      */
-    private static void toggleWidgetSharedPreferences(Context context, String recipeName, String recipeURL, String recipeServings) {
+    private static boolean toggleWidgetSharedPreferences(Context context, String recipeName) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        togglePreference(sharedPreferences, editor, SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY, recipeName);
-        togglePreference(sharedPreferences, editor, SHARED_PREFERENCES_RECIPE_URL_WIDGET_KEY, recipeURL);
-        togglePreference(sharedPreferences, editor, SHARED_PREFERENCES_RECIPE_SERVINGS_WIDGET_KEY, recipeServings);
-
-        editor.apply();
+       return togglePreference(sharedPreferences, editor, SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY, recipeName);
     }
 
     /**
@@ -82,13 +81,21 @@ public class WidgetUtils {
      * @param editor The SharedPreferences editor
      * @param preferenceKey The preference key
      * @param preferenceValue The preference value
+     *
+     * @return True if the widget is now empty. False if it isn't.
      */
-    private static void togglePreference(SharedPreferences sharedPreferences, SharedPreferences.Editor editor,
+    private static boolean togglePreference(SharedPreferences sharedPreferences, SharedPreferences.Editor editor,
                                          String preferenceKey, String preferenceValue) {
-        if(sharedPreferences.contains(preferenceKey)) {
+        // If it's removing the same recipe previously selected
+        if(sharedPreferences.contains(preferenceKey) && sharedPreferences.getString(preferenceKey, null).equals(preferenceValue)) {
             editor.remove(preferenceKey);
+            RecipeWidgetProvider.mRecipeSelected = null;
+            editor.apply();
+            return true;
         } else {
             editor.putString(preferenceKey, preferenceValue);
+            editor.apply();
+            return false;
         }
     }
 
@@ -172,6 +179,19 @@ public class WidgetUtils {
 
             Picasso.with(context).load(recipeImage)
                     .into(views, R.id.appwidget_image, appWidgetIds);
+        }
+    }
+
+    public static boolean isRecipeWidget(Context context, String recipeName) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        Log.v("SHARED", "PREFS " + sharedPreferences.getString(WidgetUtils.SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY, null));
+
+        if (sharedPreferences.contains(WidgetUtils.SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY)) {
+            return sharedPreferences.getString(WidgetUtils.SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY, null)
+                    .equals(recipeName);
+        } else {
+            return false;
         }
     }
 }

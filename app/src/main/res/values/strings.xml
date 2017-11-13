@@ -3,7 +3,20 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
 
+    <!--Widget-->
     <string name="widget_name">FavoriteRecipe</string>
+    <string name="widget_updated_toast_message">Widget Updated :-)</string>
 
-    <string name="widget_updated_toast_message">Recipe added to the Widget! :-)</string>
+    <!--Favorites fragment-->
+    <string name="no_favorites_selected_message">No Favorite Recipes Selected</string>
+
+    <!--Connection message-->
+    <string name="no_connection_message">Ready to bake some recipes?</string>
+
+    <!--Dialogs-->
+    <string name="connection_dialog_title">No Internet Connection</string>
+    <string name="connection_dialog_message">Please reconnect to bake these delicious recipes : )</string>
+    <string name="ok">OK</string>
 </resources>
+
+

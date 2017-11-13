@@ -1,6 +1,7 @@
 package com.example.android.bakingapp.Fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.example.android.bakingapp.Activities.DetailsActivity;
 import com.example.android.bakingapp.Activities.StepsListActivity;
@@ -38,8 +40,9 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
      * Views
      */
 
-    @BindView(R.id.main_favorite_recipes_grid_layout)
-    RecyclerView mMainRecipesLayout;
+    @BindView(R.id.main_favorite_recipes_grid_layout) RecyclerView mMainRecipesLayout;
+    @BindView(R.id.no_favorites_main_layout) LinearLayout mNoFavoritesLayout;
+    private View mRootView;
 
     /*
      * Fields
@@ -59,18 +62,24 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.favorites_fragment, container, false);
-        unbinder = ButterKnife.bind(this, rootView);
+        mRootView = inflater.inflate(R.layout.favorites_fragment, container, false);
+        unbinder = ButterKnife.bind(this, mRootView);
 
-        return rootView;
+        return mRootView;
     }
 
     @Override
     public void onStart() {
 
         populateFavorites(RecipesListFragment.mRecipesArray);
-        setFavoriteRecipesAdapter();
 
+        if(mFavoriteRecipesArrayList.size() > 0) {
+            mMainRecipesLayout.setVisibility(View.VISIBLE);
+            setFavoriteRecipesAdapter();
+        } else {
+            toggleNoFavoritesScreen();
+            setFavoriteRecipesAdapter();
+        }
         super.onStart();
     }
 
@@ -111,8 +120,10 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
 
         mFavoriteRecipesArrayList.clear();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
         for (Recipe recipe : recipesArray) {
-            if (FavoritesUtils.isRecipeFavorite(getActivity(), recipe, PreferenceManager.getDefaultSharedPreferences(getActivity()))) {
+            if (FavoritesUtils.isRecipeFavorite(getActivity(), recipe, sharedPreferences)) {
                 mFavoriteRecipesArrayList.add(recipe);
             }
         }
@@ -147,6 +158,21 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
             // Create and apply the layout manager
             LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(mLinearLayoutManager);
+        }
+    }
+
+
+    /**
+     * Determines if the No Favorites screen should be displayed in case there
+     * are no favorite recipes selected
+     */
+    private void toggleNoFavoritesScreen() {
+        if(mFavoriteRecipesArrayList.size() > 0) {
+            mNoFavoritesLayout.setVisibility(View.GONE);
+            mMainRecipesLayout.setVisibility(View.VISIBLE);
+        } else {
+            mNoFavoritesLayout.setVisibility(View.VISIBLE);
+            mMainRecipesLayout.setVisibility(View.GONE);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.android.bakingapp.Fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -52,17 +53,19 @@ public class RecipesListFragment extends Fragment {
         mRootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
         unbinder = ButterKnife.bind(this, mRootView);
 
-        setupTabs(mRootView);
+        if(savedInstanceState != null && savedInstanceState.containsKey("recipesArray")) {
+            mRecipesArray = savedInstanceState.getParcelableArrayList("recipesArray");
+        }
+
+        setupTabs();
 
         return mRootView;
     }
 
     /**
      * Sets up the tabs to be displayed in the main recipes grid layout
-     *
-     * @param rootView The tabs layout root view
      */
-    private void setupTabs(View rootView) {
+    private void setupTabs() {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager.setAdapter(new MainPagerAdapter(getActivity().getSupportFragmentManager(), getActivity()));
 
@@ -70,19 +73,19 @@ public class RecipesListFragment extends Fragment {
         mTabLayout.setupWithViewPager(mViewPager);
     }
 
-    /**
-     * Checks if favorite recipes have been selected
-     *
-     * @return True if the user has favorite recipes selected.
-     *         Else, false if the user has not selected favorite recipes
+    /*
+     * Lifecycle methods
      */
-    private static boolean favoritesExist() {
-        return true;
-    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList("recipeArray", mRecipesArray);
+        super.onSaveInstanceState(outState);
     }
 }

@@ -137,6 +137,7 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.details_menu, menu);
         mMenu = menu;
+        mMenu.findItem(R.id.menu_widget).setChecked(WidgetUtils.isRecipeWidget(this, mRecipeSelected.getRecipeName()));
         setMenuFavoriteIcon();
         return super.onCreateOptionsMenu(menu);
     }

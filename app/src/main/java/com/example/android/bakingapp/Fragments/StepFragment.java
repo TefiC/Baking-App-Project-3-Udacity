@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,18 +18,26 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Step;
 import com.example.android.bakingapp.Utils.MediaPlayerUtils;
 import com.example.android.bakingapp.Utils.RecipeDataUtils;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+import static com.example.android.bakingapp.Utils.MediaPlayerUtils.mMediaSession;
+
 /**
  * Fragment to display a recipe step
  */
 
-public class StepFragment extends Fragment {
+public class StepFragment extends Fragment implements Player.EventListener {
 
     /*
      * View
@@ -77,7 +86,9 @@ public class StepFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.step_fragment, container, false);
         unbinder = ButterKnife.bind(this, rootView);
 
-        mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
+        if(getArguments() != null && getArguments().containsKey(RECIPE_STEP_KEY)) {
+            mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
+        }
 
         mStepTextView.setMovementMethod(new ScrollingMovementMethod());
 
@@ -94,12 +105,19 @@ public class StepFragment extends Fragment {
         MediaPlayerUtils.initFullscreenDialog(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
         MediaPlayerUtils.initFullscreenButton(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
 
+        // Initialize the Media Session.
+        MediaPlayerUtils.initializeMediaSession(getActivity(), getActivity().getClass().getSimpleName(), mExoPlayer);
+
         return rootView;
     }
 
     public void setStepSelected(Step step) {
         mStep = step;
     }
+
+    /*
+     * Lifecycle methods
+     */
 
     @Override
     public void onStop() {
@@ -119,5 +137,56 @@ public class StepFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    /*
+     * ExoPlayer Listeners
+     */
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        if((playbackState == Player.STATE_READY) && playWhenReady){
+            MediaPlayerUtils.mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        } else if((playbackState == Player.STATE_READY)){
+            MediaPlayerUtils.mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+                    mExoPlayer.getCurrentPosition(), 1f);
+        }
+        mMediaSession.setPlaybackState(MediaPlayerUtils.mStateBuilder.build());
+    }
+
+    @Override
+    public void onRepeatModeChanged(int repeatMode) {
+
+    }
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
     }
 }

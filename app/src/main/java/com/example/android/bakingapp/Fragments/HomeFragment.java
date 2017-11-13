@@ -15,6 +15,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.example.android.bakingapp.Activities.DetailsActivity;
 import com.example.android.bakingapp.Activities.MainActivity;
@@ -45,12 +47,13 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
      */
 
     @BindView(R.id.main_recipes_grid_layout) RecyclerView mMainListRecyclerView;
+    @BindView(R.id.main_progress_bar) ProgressBar mProgressBar;
 
     /*
      * Fields
      */
 
-    private View mRootView;
+    private RelativeLayout mRootView;
     private Unbinder unbinder;
 
     /*
@@ -59,6 +62,7 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
     /**
      * Creates an instance of the fragment
+     *
      * @return A HomeFragment
      */
     public static HomeFragment newInstance() {
@@ -68,14 +72,41 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.home_fragment, container, false);
+        mRootView = (RelativeLayout) inflater.inflate(R.layout.home_fragment, container, false);
 
         unbinder = ButterKnife.bind(this, mRootView);
 
-        fetchRecipesFromInternet(getActivity(), getLoaderManager());
+        // Check if there is network connection to fetch recipes data
+        if(NetworkUtils.isNetworkAvailable(getActivity())) {
+            fetchRecipesFromInternet(getActivity(), getLoaderManager());
 
+            // Display the recyclerView is there was previous data loaded, in case of rotation
+            if(RecipesListFragment.mRecipesArray.size() > 0) {
+                mMainListRecyclerView.setVisibility(View.VISIBLE);
+            }
+        // Else, if there isn't a network connection, display a dialog and a particular screen
+        } else {
+            NetworkUtils.createNoConnectionDialog(getActivity());
+            toggleNoConnectionScreen(true);
+        }
 
         return mRootView;
+    }
+
+    /**
+     * Fetch recipes from the internet by starting the corresponding loader
+     *
+     * @param context       The context
+     * @param loaderManager The loaderManager to determine if the loader already exists
+     */
+    public void fetchRecipesFromInternet(Context context, LoaderManager loaderManager) {
+        Loader<String> searchLoader = loaderManager.getLoader(RECIPES_INTERNET_LOADER_ID);
+
+        if (searchLoader == null) {
+            loaderManager.initLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
+        } else {
+            loaderManager.restartLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
+        }
     }
 
     /**
@@ -110,6 +141,47 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
         }
     }
 
+    /**
+     * Toggles a No Connection Screen displayed to the user if there is no internet connection
+     *
+     * @param displayScreen True if the no connection screen should be displayed. False otherwise
+     */
+    private void toggleNoConnectionScreen(boolean displayScreen) {
+        if(displayScreen) {
+            mRootView.findViewById(R.id.no_connection_main_layout).setVisibility(View.VISIBLE);
+        } else {
+            mRootView.findViewById(R.id.no_connection_main_layout).setVisibility(View.GONE);
+        }
+    }
+
+    /*
+     * Lifecycle methods
+     */
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @Override
+    public void onResume() {
+
+        boolean connectionAvailable = NetworkUtils.isNetworkAvailable(getActivity());
+
+        if(RecipesListFragment.mRecipesArray.size() == 0 && connectionAvailable) {
+            toggleNoConnectionScreen(false);
+            fetchRecipesFromInternet(getActivity(), getLoaderManager());
+        } else if(!connectionAvailable) {
+            toggleNoConnectionScreen(true);
+        }
+        super.onResume();
+    }
+
+    /*
+     * Interfaces Implementations
+     */
+
     @Override
     public void onClick(Recipe recipe) {
 
@@ -123,6 +195,8 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
             startActivity(intent);
         }
     }
+
+    // Loader ======================================================================================
 
     /**
      * Loads the recipes
@@ -142,7 +216,9 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
                 @Override
                 protected void onStartLoading() {
                     super.onStartLoading();
+                    // If there was no previous data, fetch recipes from internet
                     if (RecipesListFragment.mRecipesArray.size() == 0) {
+                        mProgressBar.setVisibility(View.VISIBLE);
                         forceLoad();
                     } else {
                         setMainActivityAdapter();
@@ -164,6 +240,8 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
             fillRecipesArray(getActivity(), data);
+            mProgressBar.setVisibility(View.GONE);
+            mMainListRecyclerView.setVisibility(View.VISIBLE);
             setMainActivityAdapter();
         }
 
@@ -171,27 +249,5 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
         public void onLoaderReset(Loader<String> loader) {
 
         }
-    }
-
-    /**
-     * Fetched recipes from the internet by starting the corresponding loader
-     *
-     * @param context       The context
-     * @param loaderManager The loaderManager to determine if the loader already exists
-     */
-    public void fetchRecipesFromInternet(Context context, LoaderManager loaderManager) {
-        Loader<String> searchLoader = loaderManager.getLoader(RECIPES_INTERNET_LOADER_ID);
-
-        if (searchLoader == null) {
-            loaderManager.initLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
-        } else {
-            loaderManager.restartLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
     }
 }

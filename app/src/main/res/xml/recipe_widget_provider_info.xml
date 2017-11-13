@@ -3,8 +3,8 @@
     android:initialKeyguardLayout="@layout/recipe_widget_provider"
     android:initialLayout="@layout/recipe_widget_provider"
     android:minHeight="120dp"
-    android:minWidth="80dp"
+    android:minWidth="200dp"
     android:previewImage="@drawable/widget_image"
-    android:resizeMode="none"
+    android:resizeMode="horizontal"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen"></appwidget-provider>

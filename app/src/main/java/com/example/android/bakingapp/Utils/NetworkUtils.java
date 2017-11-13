@@ -1,9 +1,15 @@
 package com.example.android.bakingapp.Utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.widget.Button;
+
+import com.example.android.bakingapp.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,11 +95,41 @@ public class NetworkUtils {
     /**
      * Determine if there is an internet connection available.
      *
-     * @return true if there is, false if there isn't.
+     * @return true if there is an internet connection, false if there isn't.
      */
     public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+    /**
+     * Creates and displays an alert dialog telling the user
+     * there is no internet connection
+     *
+     * @param context The context
+     */
+    public static void createNoConnectionDialog(Context context) {
+
+        //Create dialog builder with corresponding settings
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+        // Set content
+        builder.setTitle(context.getString(R.string.connection_dialog_title))
+                .setMessage(context.getString(R.string.connection_dialog_message));
+        // Set button
+        builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+
+        // Create dialog and display it to the user
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
+
+        Button okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        okButton.setTextColor(Color.RED);
     }
 }

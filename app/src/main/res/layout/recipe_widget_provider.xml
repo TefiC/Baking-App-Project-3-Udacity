@@ -1,63 +1,113 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:id="@+id/appwidget_main_layout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin"
-    android:layout_gravity="center">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimaryDark"/>
-
-    <TextView
-        android:id="@+id/appwidget_text"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:background="@color/colorPrimary"
-        android:textColor="#ffffff"
-        android:textSize="24sp"
-        android:layout_weight="0.2"
-        android:textStyle="bold|italic"
-        android:gravity="center"
-        android:textAlignment="center"/>
-
-
-    <ImageView
-        android:id="@+id/appwidget_image"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.6"
-        android:src="@drawable/recipe1"
-        android:scaleType="fitXY"/>
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.2"
-        android:background="@color/colorAccent"
+        android:id="@+id/appwidget_left_layout"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:gravity="center">
+        android:orientation="vertical"
+        android:padding="@dimen/widget_margin">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/appwidget_text"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            android:background="@color/colorPrimary"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            android:textStyle="bold|italic" />
+
+
+        <ImageView
+            android:id="@+id/appwidget_image"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:background="@color/colorPrimary"
+            android:scaleType="fitXY"
+            android:src="@drawable/recipe1" />
+
+        <LinearLayout
+            android:id="@+id/appwidget_servings_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="0.15"
+            android:background="@color/colorAccent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/appwidget_servings_image"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/servings_logo_white" />
+
+            <TextView
+                android:id="@+id/appwidget_servings"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="@android:color/white" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/appwidget_ingredients_list_view"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:visibility="gone">
+
+        <!--Items-->
+
+    </ListView>
+
+    <LinearLayout
+        android:id="@+id/appwidget_empty_ingredients_list"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone"
+        android:background="@color/colorPrimaryDark">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ready to bake some delicious desserts?"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:textStyle="bold|italic"
+            android:textAlignment="center"/>
 
         <ImageView
             android:layout_width="40dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/servings_logo_white"/>
+            android:layout_height="40dp"
+            android:src="@drawable/room_service"/>
 
-        <TextView
-            android:id="@+id/appwidget_servings"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@android:color/white"
-            android:layout_gravity="center"
-            android:gravity="center"/>
 
     </LinearLayout>
 

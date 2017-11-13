@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -38,6 +40,8 @@ public class MediaPlayerUtils {
 
     private static boolean mIsExoPlayerFullScreen;
     private static Dialog mFullScreenDialog;
+    public static MediaSessionCompat mMediaSession;
+    public static PlaybackStateCompat.Builder mStateBuilder;
 
     public ImageView mFullScreenIcon;
 
@@ -48,10 +52,10 @@ public class MediaPlayerUtils {
     /**
      * Initializes Exoplayer on a SimpleExoPlayerView
      *
-     * @param context The context
+     * @param context        The context
      * @param videoUrlString The URL to fetch the video that will be played by ExoPlayer
-     * @param playerView The view where the video will be displayed
-     * @param exoPlayer An ExoPlayer instance
+     * @param playerView     The view where the video will be displayed
+     * @param exoPlayer      An ExoPlayer instance
      */
     public static void initializeExoPlayer(Context context, String videoUrlString,
                                            SimpleExoPlayerView playerView, SimpleExoPlayer exoPlayer) {
@@ -76,7 +80,7 @@ public class MediaPlayerUtils {
      * @param simpleExoPlayer An instance of SimpleExoPlayer
      */
     public static void releaseExoPlayer(SimpleExoPlayer simpleExoPlayer) {
-        if(simpleExoPlayer != null) {
+        if (simpleExoPlayer != null) {
             simpleExoPlayer.stop();
             simpleExoPlayer.release();
             simpleExoPlayer = null;
@@ -86,9 +90,8 @@ public class MediaPlayerUtils {
     /**
      * Sets up the media source that will be displayed by ExoPlayer
      *
-     * @param context The Context
+     * @param context        The Context
      * @param videoUrlString The URL of the video that will be displayed
-     *
      * @return A MediaSource from an HTTP resource
      */
     private static MediaSource setupMediaSource(Context context, String videoUrlString) {
@@ -108,12 +111,12 @@ public class MediaPlayerUtils {
     /**
      * Initializes a full screen dialog
      *
-     * @param context The Context
+     * @param context       The Context
      * @param exoPlayerView A SimpleExoPlayerView
-     * @param rootView The RootView where the dialog will be attached
+     * @param rootView      The RootView where the dialog will be attached
      */
     public static void initFullscreenDialog(final Context context, final SimpleExoPlayerView exoPlayerView,
-                                             final LinearLayout rootView) {
+                                            final LinearLayout rootView) {
 
         PlaybackControlView controlView = exoPlayerView.findViewById(R.id.exo_controller);
         final ImageView fullScreenIcon = controlView.findViewById(R.id.exo_fullscreen_icon);
@@ -131,9 +134,9 @@ public class MediaPlayerUtils {
     /**
      * Initializes full screen button in ExoPlayer's control panel
      *
-     * @param context The Context
+     * @param context             The Context
      * @param simpleExoPlayerView A view for the ExoPlayer
-     * @param rootView The layout's root view
+     * @param rootView            The layout's root view
      */
     public static void initFullscreenButton(final Context context, final SimpleExoPlayerView simpleExoPlayerView,
                                             final LinearLayout rootView) {
@@ -156,8 +159,8 @@ public class MediaPlayerUtils {
     /**
      * Opens a full screen dialog to display a video in full screen
      *
-     * @param context The Context
-     * @param exoPlayerView The ExoPlayer view
+     * @param context        The Context
+     * @param exoPlayerView  The ExoPlayer view
      * @param fullScreenIcon The full screen icon view
      */
     private static void openFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView, ImageView fullScreenIcon) {
@@ -173,9 +176,9 @@ public class MediaPlayerUtils {
      * Closes a full screen dialog, placing the video in its original container with
      * its original dimensions
      *
-     * @param context The Context
-     * @param exoPlayerView ExoPlayer's view
-     * @param rootView The layout's root view
+     * @param context        The Context
+     * @param exoPlayerView  ExoPlayer's view
+     * @param rootView       The layout's root view
      * @param fullScreenIcon ExoPlayer's full screen icon view
      */
     private static void closeFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView,
@@ -185,8 +188,8 @@ public class MediaPlayerUtils {
         ((LinearLayout) rootView.findViewById(R.id.step_main_layout)).addView(exoPlayerView, 0);
 
         // If the phone is in portrait orientation
-        if(context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            if(mTabletLayout) {
+        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (mTabletLayout) {
                 exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
             } else {
@@ -194,9 +197,9 @@ public class MediaPlayerUtils {
                         RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_phone_height), context)));
             }
 
-        // If the phone is in landscape orientation
+            // If the phone is in landscape orientation
         } else {
-            if(mTabletLayout) {
+            if (mTabletLayout) {
                 exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
             } else {
@@ -207,5 +210,65 @@ public class MediaPlayerUtils {
         mIsExoPlayerFullScreen = false;
         mFullScreenDialog.dismiss();
         fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_expand));
+    }
+
+    /**
+     * Initializes the Media Session
+     */
+    public static void initializeMediaSession(Context context, String tag, SimpleExoPlayer exoPlayer) {
+
+        // Create a MediaSessionCompat.
+        mMediaSession = new MediaSessionCompat(context, tag);
+
+        // Enable callbacks from MediaButtons and TransportControls.
+        mMediaSession.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // Don't restart the player when the app is not visible.
+        mMediaSession.setMediaButtonReceiver(null);
+
+        mStateBuilder = new PlaybackStateCompat.Builder()
+                .setActions(
+                        PlaybackStateCompat.ACTION_PLAY |
+                                PlaybackStateCompat.ACTION_PAUSE |
+                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
+
+        mMediaSession.setPlaybackState(mStateBuilder.build());
+
+        mMediaSession.setCallback(new MySessionCallback(exoPlayer));
+
+        // Start media session
+        mMediaSession.setActive(true);
+    }
+
+    /**
+     * Media Session Callback
+     */
+
+    public static class MySessionCallback extends MediaSessionCompat.Callback {
+
+        private SimpleExoPlayer mExoPlayer;
+
+        public MySessionCallback(SimpleExoPlayer exoPlayer) {
+            mExoPlayer = exoPlayer;
+        }
+
+        @Override
+        public void onPlay() {
+            mExoPlayer.setPlayWhenReady(true);
+        }
+
+        @Override
+        public void onPause() {
+            mExoPlayer.setPlayWhenReady(false);
+        }
+
+        @Override
+        public void onSkipToPrevious() {
+            mExoPlayer.seekTo(0);
+        }
     }
 }
