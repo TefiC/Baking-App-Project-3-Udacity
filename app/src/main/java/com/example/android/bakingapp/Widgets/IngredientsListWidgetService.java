@@ -21,7 +21,7 @@ public class IngredientsListWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new IngredientsListRemoteFactory(this.getApplicationContext(), RecipeWidgetProvider.mRecipeSelected.getRecipeIngredients());
+        return new IngredientsListRemoteFactory(this.getApplicationContext());
     }
 }
 
@@ -34,10 +34,16 @@ class IngredientsListRemoteFactory implements RemoteViewsService.RemoteViewsFact
     private Context mContext;
     private ArrayList<Ingredient> mIngredientsArrayList;
 
+    /*
+     * Methods
+     */
 
-    public IngredientsListRemoteFactory(Context context, ArrayList<Ingredient>ingredientArrayList) {
+    public IngredientsListRemoteFactory(Context context) {
         mContext = context;
-        mIngredientsArrayList = ingredientArrayList;
+
+        if(RecipeWidgetProvider.mRecipeSelected != null) {
+            mIngredientsArrayList = RecipeWidgetProvider.mRecipeSelected.getRecipeIngredients();
+        }
     }
 
 
@@ -48,7 +54,11 @@ class IngredientsListRemoteFactory implements RemoteViewsService.RemoteViewsFact
 
     @Override
     public void onDataSetChanged() {
-        mIngredientsArrayList = RecipeWidgetProvider.mRecipeSelected.getRecipeIngredients();
+        if(RecipeWidgetProvider.mRecipeSelected != null) {
+            mIngredientsArrayList = RecipeWidgetProvider.mRecipeSelected.getRecipeIngredients();
+        } else {
+            mIngredientsArrayList = null;
+        }
     }
 
     @Override

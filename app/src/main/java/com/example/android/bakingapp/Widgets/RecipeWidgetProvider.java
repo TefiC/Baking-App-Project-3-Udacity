@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -35,10 +36,11 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
         // If it's the first time creating a widget, the recipe is null
         if (recipeSelected == null) {
-            // If there is no previous recipe stored in memory
+            // If there is a previous recipe stored in memory
             if (mRecipeSelected != null) {
+                Log.v("WIDGET", "SETTING NON EMPTY WIDGET BEFORE");
                 setNonEmptyWidgets(context, appWidgetIds, appWidgetManager, false);
-            // Else, if there is a previous recipe selected
+            // Else, if there is no previous recipe selected
             } else {
                 setEmptyWidgetsUI(context, appWidgetIds, appWidgetManager);
             }
@@ -105,6 +107,8 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     private static void setNonEmptyWidgets(Context context, int[] appWidgetIds,
                                            AppWidgetManager appWidgetManager, boolean displayUIMessage) {
         for (int appWidgetId : appWidgetIds) {
+
+            Log.v("WIDGET", "SETTING NON EMPTY WIDGET");
             // Construct the RemoteViews object
             RemoteViews views = getIngredientsRemoteListView(context);
 
@@ -131,6 +135,8 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
         Intent intent = new Intent(context, IngredientsListWidgetService.class);
         views.setRemoteAdapter(R.id.appwidget_ingredients_list_view, intent);
+
+        views.setEmptyView(R.id.appwidget_ingredients_list_view, R.id.appwidget_empty_ingredients_list);
 
         return views;
     }
