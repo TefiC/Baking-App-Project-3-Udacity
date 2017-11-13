@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.example.android.bakingapp.Activities.MainActivity;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Ingredient;
 import com.example.android.bakingapp.Utils.RecipeDataUtils;
@@ -78,12 +79,22 @@ class IngredientsListRemoteFactory implements RemoteViewsService.RemoteViewsFact
 
         RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_item);
         Ingredient ingredient = mIngredientsArrayList.get(i);
+
         views.setTextViewText(R.id.ingredient_item_number, Integer.toString(i + 1));
-        views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
         views.setTextViewText(R.id.ingredient_item_name, RecipeDataUtils.capitalizeString(ingredient.getIngredientName()));
-        views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 12);
         views.setTextViewText(R.id.ingredient_item_quantity_unit, ingredient.getIngredientQuantity() + " " + ingredient.getIngredientUnit());
-        views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 10);
+
+        if(MainActivity.mTabletLayout) {
+
+            views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
+            views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 18);
+            views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 16);
+
+        } else {
+            views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
+            views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 12);
+            views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 10);
+        }
 
         return views;
     }

@@ -18,7 +18,6 @@ public class Ingredient implements Parcelable {
     private String mQuantity;
     private String mUnit;
 
-
     /*
      * Constructors
      */

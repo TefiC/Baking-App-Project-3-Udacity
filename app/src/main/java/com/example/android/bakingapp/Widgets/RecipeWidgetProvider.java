@@ -4,10 +4,10 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.example.android.bakingapp.Activities.MainActivity;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
 
@@ -38,7 +38,6 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         if (recipeSelected == null) {
             // If there is a previous recipe stored in memory
             if (mRecipeSelected != null) {
-                Log.v("WIDGET", "SETTING NON EMPTY WIDGET BEFORE");
                 setNonEmptyWidgets(context, appWidgetIds, appWidgetManager, false);
             // Else, if there is no previous recipe selected
             } else {
@@ -79,7 +78,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             // Construct the RemoteViews object
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 
-            views.setTextViewText(R.id.appwidget_text, "Choose a Recipe");
+            views.setTextViewText(R.id.appwidget_text, context.getString(R.string.widget_empty_message));
             views.setTextViewTextSize(R.id.appwidget_text, COMPLEX_UNIT_SP, 16);
             views.setImageViewResource(R.id.appwidget_image, R.drawable.chef);
 
@@ -108,13 +107,16 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
                                            AppWidgetManager appWidgetManager, boolean displayUIMessage) {
         for (int appWidgetId : appWidgetIds) {
 
-            Log.v("WIDGET", "SETTING NON EMPTY WIDGET");
             // Construct the RemoteViews object
             RemoteViews views = getIngredientsRemoteListView(context);
 
             views.setViewVisibility(R.id.appwidget_servings_layout, View.VISIBLE);
             views.setViewVisibility(R.id.appwidget_ingredients_list_view, View.VISIBLE);
             views.setViewVisibility(R.id.appwidget_empty_ingredients_list, View.GONE);
+
+            if(MainActivity.mTabletLayout) {
+                views.setTextViewTextSize(R.id.appwidget_text, COMPLEX_UNIT_SP, 24);
+            }
 
             // Set UI nad listener
             WidgetUtils.setWidgetUI(context, views, mRecipeSelected);
@@ -130,6 +132,13 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         }
     }
 
+    /**
+     * Returns a Remote view of a widget with the ingredients list view
+     *
+     * @param context The context
+     *
+     * @return Widget's remote view
+     */
     private static RemoteViews getIngredientsRemoteListView(Context context)  {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 

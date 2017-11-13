@@ -31,15 +31,19 @@ import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayou
 public class DetailsActivity extends AppCompatActivity {
 
     /*
+     * Constants
+     */
+
+    private static final String TAG_DETAILS_FRAGMENT = "DetailsFragment";
+
+
+    /*
      * Fields
      */
 
     private Recipe mRecipeSelected;
     private int mTabPosition;
-
-    private static final String TAG_DETAILS_FRAGMENT = "DetailsFragment";
     private DetailsFragment mDetailsFragment;
-
     private Menu mMenu;
 
     /*

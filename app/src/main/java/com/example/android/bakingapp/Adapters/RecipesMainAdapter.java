@@ -68,9 +68,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
     public void onBindViewHolder(RecipesMainAdapter.RecipeViewHolder holder, int position) {
 
         Recipe recipe = mRecipesArray.get(position);
-
         holder.setOnClickListener(holder.mRecipeCompleteView, recipe);
-
 
         holder.mRecipeServingsView.setText(Integer.toString(recipe.getRecipeServings()));
         holder.mRecipesNameView.setText(recipe.getRecipeName());

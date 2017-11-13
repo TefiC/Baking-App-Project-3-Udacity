@@ -50,7 +50,7 @@ public class MediaPlayerUtils {
      */
 
     /**
-     * Initializes Exoplayer on a SimpleExoPlayerView
+     * Initializes ExoPlayer on a SimpleExoPlayerView
      *
      * @param context        The context
      * @param videoUrlString The URL to fetch the video that will be played by ExoPlayer

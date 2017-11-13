@@ -13,6 +13,7 @@
         android:orientation="vertical"
         android:padding="@dimen/widget_margin">
 
+        <!--App name-->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,6 +22,7 @@
             android:text="@string/app_name"
             android:textColor="@android:color/white" />
 
+        <!--Recipe name/ Default text if empty-->
         <TextView
             android:id="@+id/appwidget_text"
             android:layout_width="match_parent"
@@ -33,7 +35,7 @@
             android:textSize="24sp"
             android:textStyle="bold|italic" />
 
-
+        <!--Recipe image/ Default image if empty-->
         <ImageView
             android:id="@+id/appwidget_image"
             android:layout_width="match_parent"
@@ -43,6 +45,7 @@
             android:scaleType="fitXY"
             android:src="@drawable/recipe1" />
 
+        <!--Servings main layout-->
         <LinearLayout
             android:id="@+id/appwidget_servings_layout"
             android:layout_width="match_parent"
@@ -53,12 +56,14 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <!--Servings logo-->
             <ImageView
                 android:id="@+id/appwidget_servings_image"
                 android:layout_width="40dp"
                 android:layout_height="match_parent"
                 android:src="@drawable/servings_logo_white" />
 
+            <!--Servings number-->
             <TextView
                 android:id="@+id/appwidget_servings"
                 android:layout_width="wrap_content"
@@ -71,6 +76,7 @@
 
     </LinearLayout>
 
+    <!--Ingredients list view-->
     <ListView
         android:id="@+id/appwidget_ingredients_list_view"
         android:layout_width="0dp"
@@ -83,6 +89,7 @@
 
     </ListView>
 
+    <!--Default screen if widget is empty-->
     <LinearLayout
         android:id="@+id/appwidget_empty_ingredients_list"
         android:orientation="vertical"
@@ -99,15 +106,14 @@
             android:layout_height="wrap_content"
             android:text="@string/widget_empty_ingredients_message"
             android:textColor="#ffffff"
-            android:textSize="16sp"
+            android:textSize="20sp"
             android:textStyle="bold|italic"
             android:textAlignment="center"/>
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:src="@drawable/room_service"/>
-
 
     </LinearLayout>
 

@@ -6,6 +6,8 @@
     <!--Widget-->
     <string name="widget_name">FavoriteRecipe</string>
     <string name="widget_updated_toast_message">Widget Updated :-)</string>
+    <string name="widget_empty_message">Choose a Recipe</string>
+    <string name="widget_empty_ingredients_message">Ready to bake some delicious desserts?</string>
 
     <!--Favorites fragment-->
     <string name="no_favorites_selected_message">No Favorite Recipes Selected</string>

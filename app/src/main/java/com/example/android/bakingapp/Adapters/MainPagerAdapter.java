@@ -14,13 +14,25 @@ import com.example.android.bakingapp.Fragments.HomeFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
+    /*
+     * Fields
+     */
+
     private String tabTitles[] = new String[]{"Home", "Favorites"};
     private Context context;
+
+    /*
+     * Constructor
+     */
 
     public MainPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.context = context;
     }
+
+    /*
+     * Methods
+     */
 
     @Override
     public int getCount() {

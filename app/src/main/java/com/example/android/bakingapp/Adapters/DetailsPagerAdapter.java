@@ -17,10 +17,17 @@ import java.util.ArrayList;
 
 public class DetailsPagerAdapter extends FragmentPagerAdapter {
 
+    /*
+     * Fields
+     */
+
     private ArrayList<String> tabTitles = new ArrayList<String>();
     private Context mContext;
-
     private Recipe mRecipeSelected;
+
+    /*
+     * Constructor
+     */
 
     public DetailsPagerAdapter(FragmentManager fm, Context context,
                                Recipe recipe) {
@@ -29,6 +36,10 @@ public class DetailsPagerAdapter extends FragmentPagerAdapter {
         mRecipeSelected = recipe;
         addTitlesDynamically();
     }
+
+    /*
+     * Methods
+     */
 
     /**
      * Adds the necessary titles for the tabs

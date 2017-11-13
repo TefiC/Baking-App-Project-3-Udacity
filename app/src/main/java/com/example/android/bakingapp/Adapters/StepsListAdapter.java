@@ -36,9 +36,9 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
      * Fields
      */
 
+    private Context mContext;
     private ArrayList<Step> mStepsArrayList;
     private ArrayList<Ingredient> mIngredientsArrayList;
-    private Context mContext;
     private final StepOnClickHandler mStepOnClickHandler;
     private final IngredientOnClickHandler mIngredientOnClickHandler;
 

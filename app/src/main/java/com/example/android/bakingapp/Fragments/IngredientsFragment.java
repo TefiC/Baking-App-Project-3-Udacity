@@ -38,6 +38,14 @@ public class IngredientsFragment extends Fragment {
     @BindView(R.id.ingredients_recycler_view) RecyclerView mIngredientsRecyclerView;
 
     /*
+     * Constants
+     */
+
+    private static final String INGREDIENTS_ARRAY_KEY = "ingredients_array";
+    private static final String RECIPE_NAME_KEY = "recipe_name";
+    private static final String RECIPE_IMAGE_KEY = "recipe_image";
+
+    /*
      * Fields
      */
 
@@ -45,10 +53,7 @@ public class IngredientsFragment extends Fragment {
     private ArrayList<Ingredient> mIngredientsArray;
     private String mRecipeImage;
 
-    private static final String INGREDIENTS_ARRAY_KEY = "ingredients_array";
-    private static final String RECIPE_NAME_KEY = "recipe_name";
-    private static final String RECIPE_IMAGE_KEY = "recipe_image";
-
+    // For Butter Knife
     private Unbinder unbinder;
 
     /*
