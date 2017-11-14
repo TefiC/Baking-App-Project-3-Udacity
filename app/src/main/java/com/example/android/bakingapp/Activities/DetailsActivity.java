@@ -176,8 +176,10 @@ public class DetailsActivity extends AppCompatActivity {
 
             if (set.contains(mRecipeSelected.getRecipeName())) {
                 mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, R.drawable.favorite_selected));
+                mMenu.findItem(R.id.favorite_button).getActionView().setTag(R.drawable.favorite_selected);
             } else {
                 mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, R.drawable.favorite_not_selected));
+                mMenu.findItem(R.id.favorite_button).getActionView().setTag(R.drawable.favorite_not_selected);
             }
         }
     }

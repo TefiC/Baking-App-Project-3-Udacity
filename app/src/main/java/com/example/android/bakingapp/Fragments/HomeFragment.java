@@ -56,6 +56,8 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
     private RelativeLayout mRootView;
     private Unbinder unbinder;
 
+
+
     /*
      * Methods
      */
@@ -219,6 +221,7 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
                     // If there was no previous data, fetch recipes from internet
                     if (RecipesListFragment.mRecipesArray.size() == 0) {
                         mProgressBar.setVisibility(View.VISIBLE);
+                        MainActivity.mIdlingResource.increment();
                         forceLoad();
                     } else {
                         setMainActivityAdapter();
@@ -239,6 +242,8 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
+            MainActivity.mIdlingResource.decrement();
+
             fillRecipesArray(getActivity(), data);
             mProgressBar.setVisibility(View.GONE);
             mMainListRecyclerView.setVisibility(View.VISIBLE);
