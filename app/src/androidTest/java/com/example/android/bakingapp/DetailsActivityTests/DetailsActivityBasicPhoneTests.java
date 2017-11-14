@@ -12,6 +12,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.android.bakingapp.Activities.DetailsActivity;
+import com.example.android.bakingapp.CustomAssertions.ImageViewCorrectResourceAssertion;
+import com.example.android.bakingapp.CustomAssertions.RecipeImageCorrectResourceAssertion;
 import com.example.android.bakingapp.CustomAssertions.RecyclerViewNumberOfItemsAssertion;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Ingredient;
@@ -31,6 +33,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.CoreMatchers.allOf;
 
 /**
  * Test to verify Details Activity's general functionality on phones
@@ -66,7 +69,7 @@ public class DetailsActivityBasicPhoneTests {
                     RecipeDataHelperMethods.populateStepsArray(mStepsArrayList, mNumSteps);
 
                     // Recipe with the image of recipe1
-                    Recipe recipe = new Recipe("RecipeName",mIngredientsArrayList,
+                    Recipe recipe = new Recipe("RecipeName", mIngredientsArrayList,
                             mStepsArrayList, 8, "recipe1");
 
                     // Sending necessary recipe data as extras
@@ -107,6 +110,38 @@ public class DetailsActivityBasicPhoneTests {
     public void ingredientsList_HasCorrectNumberOfItems() {
         onView(withId(R.id.ingredients_recycler_view)).check(new RecyclerViewNumberOfItemsAssertion(mNumIngredients));
     }
+
+    @Test
+    public void ingredientsTab_DisplaysRecipeNameCorrectly() {
+        onView(withText("Ingredients")).perform(click());
+        onView(withText("RecipeName")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void ingredientsTab_DisplaysCorrectRecipeImage() {
+        onView(withId(R.id.ingredients_recipe_image)).check(new RecipeImageCorrectResourceAssertion("recipe1"));
+    }
+
+
+    /*
+     * Introduction step
+     */
+
+    @Test
+    public void introductionTab_DisplaysVideoViewCorrectly() {
+        onView(allOf(isDisplayed(), withId(R.id.step_exoplayer_view))).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void introductionTab_FullScreenButtonTogglesCorrectly() {
+        onView(allOf(isDisplayed(), withId(R.id.exo_fullscreen_button))).perform(click());
+        onView(allOf(isDisplayed(), withId(R.id.exo_fullscreen_icon))).check(new ImageViewCorrectResourceAssertion(R.drawable.ic_fullscreen_skrink));
+        onView(allOf(isDisplayed(), withId(R.id.exo_fullscreen_button))).perform(click());
+        onView(allOf(isDisplayed(), withId(R.id.exo_fullscreen_icon))).check(new ImageViewCorrectResourceAssertion(R.drawable.ic_fullscreen_expand));
+    }
+
+
+
 
     @Test
     public void tabPositionReceived_isSetCorrectlyAtStart() {

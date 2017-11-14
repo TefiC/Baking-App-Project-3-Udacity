@@ -16,7 +16,7 @@ public class RecyclerViewNumberOfItemsAssertion implements ViewAssertion {
     private final int mExpectedNumberOfItems;
 
     public RecyclerViewNumberOfItemsAssertion(int expectedNumberOfItems) {
-        this.mExpectedNumberOfItems = expectedNumberOfItems;
+        mExpectedNumberOfItems = expectedNumberOfItems;
     }
 
     @Override

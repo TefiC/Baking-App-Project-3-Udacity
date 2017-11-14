@@ -33,9 +33,12 @@ public class IngredientsFragment extends Fragment {
      * Views
      */
 
-    @BindView(R.id.ingredients_recipe_image) ImageView mRecipeImageView;
-    @BindView(R.id.ingredients_recipe_name) TextView mRecipeNameView;
-    @BindView(R.id.ingredients_recycler_view) RecyclerView mIngredientsRecyclerView;
+    @BindView(R.id.ingredients_recipe_image)
+    ImageView mRecipeImageView;
+    @BindView(R.id.ingredients_recipe_name)
+    TextView mRecipeNameView;
+    @BindView(R.id.ingredients_recycler_view)
+    RecyclerView mIngredientsRecyclerView;
 
     /*
      * Constants
@@ -84,15 +87,15 @@ public class IngredientsFragment extends Fragment {
         String recipeName = getArguments().getString(RECIPE_NAME_KEY);
         String recipeImage = getArguments().getString(RECIPE_IMAGE_KEY);
 
-        if(ingredientsArrayList != null) {
+        if (ingredientsArrayList != null) {
             mIngredientsArray = ingredientsArrayList;
         }
 
-        if(recipeImage != null) {
+        if (recipeImage != null) {
             mRecipeImage = recipeImage;
         }
 
-        if(recipeName != null) {
+        if (recipeName != null) {
             mRecipeName = recipeName;
         }
     }
@@ -120,12 +123,16 @@ public class IngredientsFragment extends Fragment {
      * @param recipeImageView The ImageView where the image will be loaded
      */
     private void loadRecipeImage(ImageView recipeImageView) {
-        if(mRecipeImage.substring(0, 6).equals("recipe")) {
+
+        int numResourceTag = -1;
+
+        if (mRecipeImage.substring(0, 6).equals("recipe")) {
             int resourceId = getActivity().getResources().getIdentifier(mRecipeImage, "drawable", getActivity().getPackageName());
             recipeImageView.setImageResource(resourceId);
         } else {
             Picasso.with(getActivity()).load(mRecipeImage).into(recipeImageView);
         }
+        recipeImageView.setTag(mRecipeImage);
     }
 
     /**

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,8 @@ public class RecipesListFragment extends Fragment {
         mRootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
         unbinder = ButterKnife.bind(this, mRootView);
 
+        Log.v("COUNTER", "CREATING RECIPES LIST FRAGMENT");
+
         if(savedInstanceState != null && savedInstanceState.containsKey("recipesArray")) {
             mRecipesArray = savedInstanceState.getParcelableArrayList("recipesArray");
         }
@@ -68,6 +71,8 @@ public class RecipesListFragment extends Fragment {
     private void setupTabs() {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager.setAdapter(new MainPagerAdapter(getActivity().getSupportFragmentManager(), getActivity()));
+
+        Log.v("COUNTER", "SETTING UP TABS");
 
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);

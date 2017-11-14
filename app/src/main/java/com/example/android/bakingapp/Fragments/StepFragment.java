@@ -90,6 +90,8 @@ public class StepFragment extends Fragment implements Player.EventListener {
             mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
         }
 
+        rootView.setTag(R.drawable.ic_fullscreen_expand);
+
         mStepTextView.setMovementMethod(new ScrollingMovementMethod());
 
         if(!mStep.getStepVideoUrl().equals("")) {

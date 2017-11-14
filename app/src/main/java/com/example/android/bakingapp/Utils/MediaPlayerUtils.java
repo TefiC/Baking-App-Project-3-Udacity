@@ -169,6 +169,7 @@ public class MediaPlayerUtils {
         mFullScreenDialog.addContentView(exoPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_skrink));
         mIsExoPlayerFullScreen = true;
+        exoPlayerView.findViewById(R.id.exo_fullscreen_icon).setTag(R.drawable.ic_fullscreen_skrink);
         mFullScreenDialog.show();
     }
 
@@ -208,6 +209,7 @@ public class MediaPlayerUtils {
         }
 
         mIsExoPlayerFullScreen = false;
+        exoPlayerView.findViewById(R.id.exo_fullscreen_icon).setTag(R.drawable.ic_fullscreen_expand);
         mFullScreenDialog.dismiss();
         fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_expand));
     }

@@ -12,6 +12,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import butterknife.Unbinder;
 
 import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
 import static com.example.android.bakingapp.Utils.NetworkUtils.RECIPES_INTERNET_LOADER_ID;
+import static com.example.android.bakingapp.Utils.NetworkUtils.createNoConnectionDialog;
 import static com.example.android.bakingapp.Utils.RecipeDataUtils.fillRecipesArray;
 
 /**
@@ -78,19 +80,19 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         unbinder = ButterKnife.bind(this, mRootView);
 
-        // Check if there is network connection to fetch recipes data
-        if(NetworkUtils.isNetworkAvailable(getActivity())) {
-            fetchRecipesFromInternet(getActivity(), getLoaderManager());
-
-            // Display the recyclerView is there was previous data loaded, in case of rotation
-            if(RecipesListFragment.mRecipesArray.size() > 0) {
-                mMainListRecyclerView.setVisibility(View.VISIBLE);
-            }
-        // Else, if there isn't a network connection, display a dialog and a particular screen
-        } else {
-            NetworkUtils.createNoConnectionDialog(getActivity());
-            toggleNoConnectionScreen(true);
-        }
+//        // Check if there is network connection to fetch recipes data
+//        if(NetworkUtils.isNetworkAvailable(getActivity())) {
+//            fetchRecipesFromInternet(getActivity(), getLoaderManager());
+//
+//            // Display the recyclerView is there was previous data loaded, in case of rotation
+//            if(RecipesListFragment.mRecipesArray.size() > 0) {
+//                mMainListRecyclerView.setVisibility(View.VISIBLE);
+//            }
+//        // Else, if there isn't a network connection, display a dialog and a particular screen
+//        } else {
+//            NetworkUtils.createNoConnectionDialog(getActivity());
+//            toggleNoConnectionScreen(true);
+//        }
 
         return mRootView;
     }
@@ -103,6 +105,8 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
      */
     public void fetchRecipesFromInternet(Context context, LoaderManager loaderManager) {
         Loader<String> searchLoader = loaderManager.getLoader(RECIPES_INTERNET_LOADER_ID);
+
+        Log.v("COUNTER", "FETCHING DATA");
 
         if (searchLoader == null) {
             loaderManager.initLoader(RECIPES_INTERNET_LOADER_ID, null, new RecipesInternetLoader(context));
@@ -176,6 +180,7 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
             fetchRecipesFromInternet(getActivity(), getLoaderManager());
         } else if(!connectionAvailable) {
             toggleNoConnectionScreen(true);
+            createNoConnectionDialog(getActivity());
         }
         super.onResume();
     }
@@ -200,6 +205,8 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
     // Loader ======================================================================================
 
+    private boolean mDataHasLoaded = false;
+
     /**
      * Loads the recipes
      */
@@ -219,18 +226,22 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
                 protected void onStartLoading() {
                     super.onStartLoading();
                     // If there was no previous data, fetch recipes from internet
-                    if (RecipesListFragment.mRecipesArray.size() == 0) {
+                    if (RecipesListFragment.mRecipesArray.size() == 0 && !mDataHasLoaded) {
                         mProgressBar.setVisibility(View.VISIBLE);
                         MainActivity.mIdlingResource.increment();
+                        Log.v("COUNTER", "INCREMENT");
+                        mDataHasLoaded = true;
                         forceLoad();
                     } else {
                         setMainActivityAdapter();
+                        Log.v("COUNTER", "NOT LOADING");
                     }
                 }
 
                 @Override
                 public String loadInBackground() {
                     try {
+                        Log.v("COUNTER", "LOADING IN BACKGROUND");
                         return NetworkUtils.getResponseFromHttpUrl(NetworkUtils.buildSearchUrl(NetworkUtils.RECIPES_SEARCH_URL));
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -242,12 +253,13 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         @Override
         public void onLoadFinished(Loader<String> loader, String data) {
-            MainActivity.mIdlingResource.decrement();
 
             fillRecipesArray(getActivity(), data);
             mProgressBar.setVisibility(View.GONE);
             mMainListRecyclerView.setVisibility(View.VISIBLE);
             setMainActivityAdapter();
+            MainActivity.mIdlingResource.decrement();
+            Log.v("COUNTER", "DECREMENT");
         }
 
         @Override
