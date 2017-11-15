@@ -7,9 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.idling.CountingIdlingResource;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.android.bakingapp.Fragments.RecipesListFragment;
 import com.example.android.bakingapp.R;
 
 import butterknife.BindView;
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     public static CountingIdlingResource mIdlingResource = new CountingIdlingResource("NEW_LOADER");
 
     @Nullable @BindView (R.id.divider) View mDivider;
+    private RecipesListFragment mRecipesListFragment;
+
+    private static final String TAG_RECIPES_LIST_FRAGMENT = "recipes_list_fragment";
 
     /*
      * Methods
@@ -44,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setElevation(0);
 
         isTabletLayout();
+
+        setFragment();
     }
 
     /**
@@ -69,5 +76,26 @@ public class MainActivity extends AppCompatActivity {
             mIdlingResource = new CountingIdlingResource("NEW_LOADER");
         }
         return mIdlingResource;
+    }
+
+    private void setFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mRecipesListFragment = (RecipesListFragment) fragmentManager.findFragmentByTag(TAG_RECIPES_LIST_FRAGMENT);
+
+        if(mRecipesListFragment == null) {
+
+            mRecipesListFragment = new RecipesListFragment();
+
+            fragmentManager.beginTransaction()
+                    .add(R.id.master_recipes_list_fragment, mRecipesListFragment, TAG_RECIPES_LIST_FRAGMENT)
+                    .commit();
+        } else {
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.master_recipes_list_fragment, mRecipesListFragment, TAG_RECIPES_LIST_FRAGMENT)
+                    .commit();
+        }
+
+
     }
 }

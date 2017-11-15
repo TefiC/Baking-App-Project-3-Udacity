@@ -31,8 +31,10 @@ public class RecipesListFragment extends Fragment {
      * Views
      */
 
-    @BindView(R.id.viewpager) ViewPager mViewPager;
-    @BindView(R.id.sliding_tabs) TabLayout mTabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager mViewPager;
+    @BindView(R.id.sliding_tabs)
+    TabLayout mTabLayout;
 
     /*
      * Fields
@@ -56,7 +58,7 @@ public class RecipesListFragment extends Fragment {
 
         Log.v("COUNTER", "CREATING RECIPES LIST FRAGMENT");
 
-        if(savedInstanceState != null && savedInstanceState.containsKey("recipesArray")) {
+        if (savedInstanceState != null && savedInstanceState.containsKey("recipesArray")) {
             mRecipesArray = savedInstanceState.getParcelableArrayList("recipesArray");
         }
 

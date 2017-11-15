@@ -77,6 +77,8 @@ public class DetailsActivityBasicPhoneTests {
                     // Simulate that the user touched on a tab that is not the default 0th tab
                     result.putExtra("tabPosition", 1);
 
+                    result.putExtra("isTabletLayout", false);
+
                     return result;
                 }
             };
@@ -139,9 +141,6 @@ public class DetailsActivityBasicPhoneTests {
         onView(allOf(isDisplayed(), withId(R.id.exo_fullscreen_button))).perform(click());
         onView(allOf(isDisplayed(), withId(R.id.exo_fullscreen_icon))).check(new ImageViewCorrectResourceAssertion(R.drawable.ic_fullscreen_expand));
     }
-
-
-
 
     @Test
     public void tabPositionReceived_isSetCorrectlyAtStart() {

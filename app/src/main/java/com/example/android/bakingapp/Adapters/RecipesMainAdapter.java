@@ -134,6 +134,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
         } else {
             Picasso.with(mContext).load(recipe.getRecipeImage()).into(recipeViewHolder.mRecipeImageView);
         }
+        recipeViewHolder.mRecipeImageView.setTag(recipe.getRecipeImage());
     }
 
     /*

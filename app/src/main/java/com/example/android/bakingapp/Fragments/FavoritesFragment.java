@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.example.android.bakingapp.Activities.DetailsActivity;
+import com.example.android.bakingapp.Activities.MainActivity;
 import com.example.android.bakingapp.Activities.StepsListActivity;
 import com.example.android.bakingapp.Adapters.RecipesMainAdapter;
 import com.example.android.bakingapp.R;
@@ -103,10 +104,12 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
         if (mTabletLayout) {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtra("recipeObject", recipe);
+            intent.putExtra("isTabletLayout", MainActivity.mTabletLayout);
             startActivity(intent);
         } else {
             Intent intent = new Intent(getActivity(), StepsListActivity.class);
             intent.putExtra("recipeObject", recipe);
+            intent.putExtra("isTabletLayout", MainActivity.mTabletLayout);
             startActivity(intent);
         }
     }

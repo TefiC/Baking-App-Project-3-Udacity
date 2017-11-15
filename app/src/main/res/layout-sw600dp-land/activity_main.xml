@@ -3,9 +3,8 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/master_recipes_list_fragment"
-        android:name="com.example.android.bakingapp.Fragments.RecipesListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="2"/>

@@ -22,8 +22,6 @@ import com.example.android.bakingapp.Widgets.WidgetUtils;
 
 import java.util.HashSet;
 
-import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
-
 /**
  * Details activity for phone layout
  */
@@ -46,6 +44,9 @@ public class DetailsActivity extends AppCompatActivity {
     private DetailsFragment mDetailsFragment;
     private Menu mMenu;
 
+    private boolean mIsFavorite;
+    private boolean mIsTablet;
+
     /*
      * Methods
      */
@@ -54,6 +55,10 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
+
+        if(getIntent().hasExtra("isTabletLayout")) {
+            mIsTablet = getIntent().getExtras().getBoolean("isTabletLayout");
+        }
 
         // Remove action bar shadow and elevation
         getSupportActionBar().setElevation(0);
@@ -68,7 +73,7 @@ public class DetailsActivity extends AppCompatActivity {
             mTabPosition = getIntent().getExtras().getInt("tabPosition");
         }
 
-        if (mTabletLayout) {
+        if (mIsTablet) {
             setupStepsFragmentsForTablet();
         } else {
             setupDetailsFragmentForPhone();
@@ -142,7 +147,7 @@ public class DetailsActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.details_menu, menu);
         mMenu = menu;
         mMenu.findItem(R.id.menu_widget).setChecked(WidgetUtils.isRecipeWidget(this, mRecipeSelected.getRecipeName()));
-        setMenuFavoriteIcon();
+        mIsFavorite = setMenuFavoriteIcon();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -166,7 +171,7 @@ public class DetailsActivity extends AppCompatActivity {
      * Sets the corresponding favorite icon (empty heart if the recipe is not favorite,
      * white heart if it is favorite)
      */
-    private void setMenuFavoriteIcon() {
+    private boolean setMenuFavoriteIcon() {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -176,11 +181,13 @@ public class DetailsActivity extends AppCompatActivity {
 
             if (set.contains(mRecipeSelected.getRecipeName())) {
                 mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, R.drawable.favorite_selected));
-                mMenu.findItem(R.id.favorite_button).getActionView().setTag(R.drawable.favorite_selected);
+                return true;
             } else {
                 mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, R.drawable.favorite_not_selected));
-                mMenu.findItem(R.id.favorite_button).getActionView().setTag(R.drawable.favorite_not_selected);
+                return false;
             }
         }
+
+        return false;
     }
 }

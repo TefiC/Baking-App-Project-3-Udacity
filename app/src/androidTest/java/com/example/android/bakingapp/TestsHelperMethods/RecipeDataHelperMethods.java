@@ -33,23 +33,23 @@ public class RecipeDataHelperMethods {
         for(int i = 1; i < numSteps + 1; i++) {
             // Introduction step
             if(i==1) {
-                stepArrayList.add(new Step(1,
+                stepArrayList.add(new Step(i,
                         "Recipe Introduction",
                         "Recipe Introduction",
                         "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4",
                         ""));
             // Step without video URL to test when recipe step has no video assigned
             } else if (i==2) {
-                stepArrayList.add(new Step(1,
-                        "Step" + i + "ShortDescription",
-                        "Step" + i + "LongDescription",
+                stepArrayList.add(new Step(i,
+                        "Step" + (i - 1) + "ShortDescription",
+                        "Step" + (i - 1) + "LongDescription",
                         "",
                         ""));
             // All other steps
             } else {
-                stepArrayList.add(new Step(1,
-                        "Step" + i + "ShortDescription",
-                        "Step" + i + "LongDescription",
+                stepArrayList.add(new Step(i,
+                        "Step" + (i -1) + "ShortDescription",
+                        "Step" + (i - 1) + "LongDescription",
                         "https://d17h27t6h515a5.cloudfront.net/topher/2017/April/58ffd974_-intro-creampie/-intro-creampie.mp4",
                         ""));
             }

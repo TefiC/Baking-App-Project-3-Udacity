@@ -3,7 +3,6 @@ package com.example.android.bakingapp.DetailsActivityTests;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,6 +18,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -47,25 +47,31 @@ public class DetailsActivityGeneralTests {
 
     @Rule
     public ActivityTestRule<DetailsActivity> mActivityTestRule =
-            new ActivityTestRule<DetailsActivity>(DetailsActivity.class) {
+            new ActivityTestRule<DetailsActivity>(DetailsActivity.class, true, true) {
                 @Override
                 protected Intent getActivityIntent() {
-                    Context targetContext = InstrumentationRegistry.getInstrumentation()
+                    Context targetContext = getInstrumentation()
                             .getTargetContext();
                     Intent result = new Intent(targetContext, DetailsActivity.class);
 
                     RecipeDataHelperMethods.populateIngredientsArray(mIngredientsArrayList, mNumIngredients);
                     RecipeDataHelperMethods.populateStepsArray(mStepsArrayList, mNumSteps);
 
-                    Recipe recipe = new Recipe("RecipeName",mIngredientsArrayList,
+                    Recipe recipe = new Recipe("RecipeName", mIngredientsArrayList,
                             mStepsArrayList, 8, "recipe1");
 
                     // Sending necessary recipe data as extras
                     result.putExtra("recipeObject", recipe);
 
+                    result.putExtra("isTabletLayout", true);
+
                     return result;
                 }
             };
+
+    /*
+     * Methods
+     */
 
     @Test
     public void detailsActivityTitle_DisplaysCorrectly() {

@@ -87,6 +87,8 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
             }
         }
 
+        holder.mStepCardVideo.setContentDescription("step_video_logo");
+
         // Get the main root view
         LinearLayout mainLayout = holder.mStepCardMainLayout;
 

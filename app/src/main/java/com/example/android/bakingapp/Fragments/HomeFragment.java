@@ -80,6 +80,15 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         unbinder = ButterKnife.bind(this, mRootView);
 
+        Log.v("FRAGMENT", "CREATING FRAGMENT");
+
+        if(savedInstanceState != null && savedInstanceState.containsKey("recipeObjects")) {
+            RecipesListFragment.mRecipesArray = savedInstanceState.getParcelableArrayList("recipeObjects");
+        }
+
+        setMainActivityAdapter();
+        mRootView.findViewById(R.id.main_recipes_grid_layout).setVisibility(View.VISIBLE);
+//
 //        // Check if there is network connection to fetch recipes data
 //        if(NetworkUtils.isNetworkAvailable(getActivity())) {
 //            fetchRecipesFromInternet(getActivity(), getLoaderManager());
@@ -120,14 +129,16 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
      */
     private void setMainActivityAdapter() {
 
-        // Layout Manager
-        setMainActivityLayoutManager(mMainListRecyclerView);
+        if(mMainListRecyclerView != null) {
+            // Layout Manager
+            setMainActivityLayoutManager(mMainListRecyclerView);
 
-        // Create and set the adapter
-        RecipesMainAdapter recipesMainAdapter = new RecipesMainAdapter(getActivity(), RecipesListFragment.mRecipesArray, this);
+            // Create and set the adapter
+            RecipesMainAdapter recipesMainAdapter = new RecipesMainAdapter(getActivity(), RecipesListFragment.mRecipesArray, this);
 
-        if (RecipesListFragment.mRecipesArray.size() > 0) {
-            mMainListRecyclerView.setAdapter(recipesMainAdapter);
+            if (RecipesListFragment.mRecipesArray.size() > 0) {
+                mMainListRecyclerView.setAdapter(recipesMainAdapter);
+            }
         }
     }
 
@@ -195,10 +206,12 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
         if(MainActivity.mTabletLayout) {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtra("recipeObject", recipe);
+            intent.putExtra("isTabletLayout", MainActivity.mTabletLayout);
             startActivity(intent);
         } else {
             Intent intent = new Intent(getActivity(), StepsListActivity.class);
             intent.putExtra("recipeObject", recipe);
+            intent.putExtra("isTabletLayout", MainActivity.mTabletLayout);
             startActivity(intent);
         }
     }
@@ -266,5 +279,11 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
         public void onLoaderReset(Loader<String> loader) {
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList("recipeObjects", RecipesListFragment.mRecipesArray);
+        super.onSaveInstanceState(outState);
     }
 }
