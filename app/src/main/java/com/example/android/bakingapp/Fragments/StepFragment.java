@@ -32,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import static com.example.android.bakingapp.Utils.MediaPlayerUtils.mMediaSession;
+import static com.example.android.bakingapp.Utils.MediaPlayerUtils.mStateBuilder;
 
 /**
  * Fragment to display a recipe step
@@ -43,31 +44,50 @@ public class StepFragment extends Fragment implements Player.EventListener {
      * View
      */
 
-    @BindView(R.id.step_exoplayer_view) SimpleExoPlayerView mSimpleExoPlayerView;
-    @BindView(R.id.step_text_view) TextView mStepTextView;
-    @BindView(R.id.step_main_layout) LinearLayout mStepMainLayout;
-    @BindView(R.id.default_step_image) ImageView mStepDefaultImageView;
+    @BindView(R.id.step_exoplayer_view)
+    SimpleExoPlayerView mSimpleExoPlayerView;
+    @BindView(R.id.step_text_view)
+    TextView mStepTextView;
+    @BindView(R.id.step_main_layout)
+    LinearLayout mStepMainLayout;
+    @BindView(R.id.default_step_image)
+    ImageView mStepDefaultImageView;
+
 
     /*
      * Constants
      */
 
+
     private static final String RECIPE_STEP_KEY = "recipe_step";
+
 
     /*
      * Fields
      */
 
+
     private Step mStep;
     private SimpleExoPlayer mExoPlayer;
     private FrameLayout mFullScreenButton;
 
+    // Butter Knife
     private Unbinder unbinder;
+
 
     /*
      * Methods
      */
 
+
+    /**
+     * Method that returns an instance of the fragment, adding extras
+     * passed as parameters
+     *
+     * @param recipeStep The corresponding recipe Step
+     *
+     * @return A StepFragment instance with arguments
+     */
     public static StepFragment newInstance(Step recipeStep) {
 
         StepFragment stepFragment = new StepFragment();
@@ -84,42 +104,78 @@ public class StepFragment extends Fragment implements Player.EventListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_fragment, container, false);
+
+        // Bind views
         unbinder = ButterKnife.bind(this, rootView);
 
-        if(getArguments() != null && getArguments().containsKey(RECIPE_STEP_KEY)) {
+        if (getArguments() != null && getArguments().containsKey(RECIPE_STEP_KEY)) {
             mStep = getArguments().getParcelable(RECIPE_STEP_KEY);
         }
 
+        // Add tah to the root view
         rootView.setTag(R.drawable.ic_fullscreen_expand);
+        // Make description scrollable
+        makeStepDescriptionScrollable();
+        // Set up video player
+        setUpExoPlayer();
+        // Populate step description
+        setStepDescriptionText();
 
-        mStepTextView.setMovementMethod(new ScrollingMovementMethod());
+        return rootView;
+    }
 
-        if(!mStep.getStepVideoUrl().equals("")) {
+    /*
+     * Sets up video player if the step has a video to display.
+     * Else, displays a default image instead
+     */
+    private void setUpExoPlayer() {
+        // If the video URL is not empty, set up the video player
+        // Else, display a default image
+        if (!mStep.getStepVideoUrl().equals("")) {
             mSimpleExoPlayerView.setVisibility(View.VISIBLE);
             MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), mSimpleExoPlayerView, mExoPlayer);
         } else {
             mStepDefaultImageView.setVisibility(View.VISIBLE);
         }
 
-        mStepTextView.setText(RecipeDataUtils.formatStepDescription(mStep.getStepDescription()));
-
         // Initialize media player
-        MediaPlayerUtils.initFullscreenDialog(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
-        MediaPlayerUtils.initFullscreenButton(getActivity(), mSimpleExoPlayerView, mStepMainLayout);
-
-        // Initialize the Media Session.
-        MediaPlayerUtils.initializeMediaSession(getActivity(), getActivity().getClass().getSimpleName(), mExoPlayer);
-
-        return rootView;
+        MediaPlayerUtils.initFullscreenDialog(getActivity(), mSimpleExoPlayerView, mStepMainLayout, mExoPlayer);
+        MediaPlayerUtils.initFullscreenButton(getActivity(), mSimpleExoPlayerView, mStepMainLayout, mExoPlayer);
     }
 
+    /*
+     * Sets the step description on the corresponding TextView
+     */
+    private void setStepDescriptionText() {
+        mStepTextView.setText(RecipeDataUtils.formatStepDescription(mStep.getStepDescription()));
+    }
+
+    /*
+     * Makes the step description view scrollable
+     */
+    private void makeStepDescriptionScrollable() {
+        mStepTextView.setMovementMethod(new ScrollingMovementMethod());
+    }
+
+
+    /*
+     * Setters
+     */
+
+
+    /*
+     * Sets the data of the currently selected step
+     */
     public void setStepSelected(Step step) {
         mStep = step;
     }
 
+
+
     /*
      * Lifecycle methods
      */
+
 
     @Override
     public void onStop() {
@@ -130,7 +186,7 @@ public class StepFragment extends Fragment implements Player.EventListener {
     @Override
     public void onPause() {
         super.onPause();
-        if(mExoPlayer != null) {
+        if (mExoPlayer != null) {
             mExoPlayer.stop();
         }
     }
@@ -162,14 +218,14 @@ public class StepFragment extends Fragment implements Player.EventListener {
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if((playbackState == Player.STATE_READY) && playWhenReady){
-            MediaPlayerUtils.mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
+        if ((playbackState == Player.STATE_READY) && playWhenReady) {
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PLAYING,
                     mExoPlayer.getCurrentPosition(), 1f);
-        } else if((playbackState == Player.STATE_READY)){
-            MediaPlayerUtils.mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
+        } else if ((playbackState == Player.STATE_READY)) {
+            mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
         }
-        mMediaSession.setPlaybackState(MediaPlayerUtils.mStateBuilder.build());
+        mMediaSession.setPlaybackState(mStateBuilder.build());
     }
 
     @Override

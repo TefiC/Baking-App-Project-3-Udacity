@@ -36,24 +36,30 @@ public class DetailsFragment extends Fragment {
      * Constants
      */
 
+
     private static final String TAB_SELECTED_POSITION_TAG = "tab_selected_position";
     private static final String LAST_TAB_SELECTED_POSITION_KEY = "last_tab_selected";
     private static final String TAG_RECIPE_SELECTED = "recipe_selected";
+
 
     /*
      * Fields
      */
 
+
     private Recipe mRecipeSelected;
 
+    // Butter Knife
     private Unbinder unbinder;
 
-    // Data that will be kept
+    // Data that will be kept on rotation
     private int mCurrentTabSelected = 0;
+
 
     /*
      * Methods
      */
+
 
     /**
      * Method that returns an instance of the fragment, adding extras
@@ -61,7 +67,8 @@ public class DetailsFragment extends Fragment {
      *
      * @param tabPosition The position of the tab that corresponds
      *                    to the step selected by the user
-     * @return A DetailsFragment instance with extras
+     *
+     * @return A DetailsFragment instance with arguments
      */
     public static DetailsFragment newInstance(int tabPosition) {
 
@@ -78,19 +85,23 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // retain the fragment
+
+        // Retain the fragment on rotation
         setRetainInstance(true);
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.details_fragment, container, false);
 
         unbinder = ButterKnife.bind(this, rootView);
 
-        mCurrentTabSelected = getArguments().getInt(TAB_SELECTED_POSITION_TAG);
+        if(getArguments() != null && getArguments().containsKey(TAB_SELECTED_POSITION_TAG)) {
+            mCurrentTabSelected = getArguments().getInt(TAB_SELECTED_POSITION_TAG);
+        }
 
         // Restore fragment state after rotation
         if (savedInstanceState != null
@@ -101,7 +112,7 @@ public class DetailsFragment extends Fragment {
         }
 
         if (mRecipeSelected != null) {
-            setupTabs(rootView);
+            setupTabs();
         }
 
         return rootView;
@@ -109,10 +120,8 @@ public class DetailsFragment extends Fragment {
 
     /**
      * Sets up the tabs to be displayed in the details layout
-     *
-     * @param rootView The tabs layout root view
      */
-    private void setupTabs(View rootView) {
+    private void setupTabs() {
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager.setAdapter(new DetailsPagerAdapter(getChildFragmentManager(), getActivity(), mRecipeSelected));
@@ -126,14 +135,13 @@ public class DetailsFragment extends Fragment {
     }
 
     /**
-     * Assigns a click listener to update the variable that holds
-     * the position of the tab currently selected
+     * Assigns a click listener to update the variable that stores
+     * the position of the currently selected tab
      */
     private void setTabOnClickListener() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
             @Override
             public void onPageSelected(int position) {
@@ -141,26 +149,28 @@ public class DetailsFragment extends Fragment {
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
-            }
+            public void onPageScrollStateChanged(int state) {}
         });
     }
+
 
     /*
      * Setters
      */
 
+
     public void setRecipeSelected(Recipe recipeSelected) {
         mRecipeSelected = recipeSelected;
     }
+
 
     /*
      * Lifecycle methods
      */
 
+
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-
         // Save data
         outState.putInt(LAST_TAB_SELECTED_POSITION_KEY, mCurrentTabSelected);
         outState.putParcelable(TAG_RECIPE_SELECTED, mRecipeSelected);

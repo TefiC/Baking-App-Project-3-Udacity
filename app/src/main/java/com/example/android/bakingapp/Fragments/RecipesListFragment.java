@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,29 +36,40 @@ public class RecipesListFragment extends Fragment {
     TabLayout mTabLayout;
 
     /*
+     * Constants
+     */
+
+    private static final String RECIPES_ARRAY_INTENT_KEY = "recipesArray";
+
+
+    /*
      * Fields
      */
 
+
     public static ArrayList<Recipe> mRecipesArray = new ArrayList<Recipe>();
+    private View mRootView;
+
+    // Butter Knife
     private Unbinder unbinder;
 
-    private View mRootView;
 
     /*
      * Methods
      */
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mRootView = inflater.inflate(R.layout.recipes_list_fragment, container, false);
+
+        // Butter Knife
         unbinder = ButterKnife.bind(this, mRootView);
 
-        Log.v("COUNTER", "CREATING RECIPES LIST FRAGMENT");
-
-        if (savedInstanceState != null && savedInstanceState.containsKey("recipesArray")) {
-            mRecipesArray = savedInstanceState.getParcelableArrayList("recipesArray");
+        if (savedInstanceState != null && savedInstanceState.containsKey(RECIPES_ARRAY_INTENT_KEY)) {
+            mRecipesArray = savedInstanceState.getParcelableArrayList(RECIPES_ARRAY_INTENT_KEY);
         }
 
         setupTabs();
@@ -74,8 +84,6 @@ public class RecipesListFragment extends Fragment {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         mViewPager.setAdapter(new MainPagerAdapter(getActivity().getSupportFragmentManager(), getActivity()));
 
-        Log.v("COUNTER", "SETTING UP TABS");
-
         // Give the TabLayout the ViewPager
         mTabLayout.setupWithViewPager(mViewPager);
     }
@@ -87,12 +95,15 @@ public class RecipesListFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        // Unbind views
         unbinder.unbind();
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putParcelableArrayList("recipeArray", mRecipesArray);
+        // Save data
+        outState.putParcelableArrayList(RECIPES_ARRAY_INTENT_KEY, mRecipesArray);
         super.onSaveInstanceState(outState);
     }
 }

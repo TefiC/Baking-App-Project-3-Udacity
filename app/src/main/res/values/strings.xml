@@ -19,6 +19,14 @@
     <string name="connection_dialog_title">No Internet Connection</string>
     <string name="connection_dialog_message">Please reconnect to bake these delicious recipes : )</string>
     <string name="ok">OK</string>
+
+    <!--Menu-->
+    <string name="menu_add_to_widget">Add to Widget</string>
+    <string name="menu_favorite">Favorite</string>
+
+    <!--Toasts-->
+    <string name="removed_from_favorites_message">Removed From Favorites</string>
+    <string name="added_to_favorites_message">Added to Favorites :)</string>
 </resources>
 
 

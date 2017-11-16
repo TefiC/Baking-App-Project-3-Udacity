@@ -9,7 +9,6 @@ import android.os.Parcelable;
 
 public class Ingredient implements Parcelable {
 
-
     /*
      * Fields
      */
@@ -18,9 +17,11 @@ public class Ingredient implements Parcelable {
     private String mQuantity;
     private String mUnit;
 
+
     /*
      * Constructors
      */
+
 
     public Ingredient(String name, String quantity, String unit) {
         mName = name;
@@ -34,9 +35,11 @@ public class Ingredient implements Parcelable {
         mUnit = in.readString();
     }
 
+
     /*
      * Implementing Parcelable
      */
+
 
     @Override
     public int describeContents() {
@@ -63,17 +66,21 @@ public class Ingredient implements Parcelable {
         }
     };
 
+
     /*
      * Getters
      */
+
 
     public String getIngredientName() { return mName; }
     public String getIngredientQuantity() { return mQuantity; }
     public String getIngredientUnit() { return mUnit; }
 
+
     /*
      * Setters
      */
+
 
     public void setIngredientName(String name) { mName = name; }
     public void setIngredientQuantity(String quantity) { mQuantity = quantity; }

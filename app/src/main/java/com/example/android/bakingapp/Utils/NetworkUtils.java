@@ -31,15 +31,18 @@ public class NetworkUtils {
     public static final String RECIPES_SEARCH_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
     public static final int RECIPES_INTERNET_LOADER_ID = 59;
 
+
     /*
      * Methods
      */
+
 
     /**
      * Fetches data by performing an http network request
      *
      * @param url The url to fetch data from
      * @return A JSON in String format
+     *
      * @throws IOException In case there is an error with the connection
      */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
@@ -86,6 +89,7 @@ public class NetworkUtils {
      * Build a Uri from a String Url
      *
      * @param stringUrl The String Url
+     *
      * @return A Uri instance
      */
     private static Uri buildUri(String stringUrl) {

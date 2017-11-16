@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.example.android.bakingapp.Fragments.DetailsFragment;
 import com.example.android.bakingapp.Fragments.IngredientsFragment;
+import com.example.android.bakingapp.Fragments.StepFragment;
 import com.example.android.bakingapp.Fragments.StepsListFragment;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
@@ -33,51 +34,69 @@ public class DetailsActivity extends AppCompatActivity {
      */
 
     private static final String TAG_DETAILS_FRAGMENT = "DetailsFragment";
+    private static final String IS_TABLET_LAYOUT_INTENT_KEY = "isTabletLayout";
+    private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
+    private static final String TAB_POSITION_INTENT_KEY = "tabPosition";
+
+    // Fragment
+    private StepFragment mStepFragment;
 
 
     /*
      * Fields
      */
 
+
+    // Recipe
     private Recipe mRecipeSelected;
+
+    // Activity
     private int mTabPosition;
     private DetailsFragment mDetailsFragment;
-    private Menu mMenu;
-
+    public Menu mMenu;
+    private boolean mIsTabletLayout;
     private boolean mIsFavorite;
-    private boolean mIsTablet;
+
+    // Favorites
+    public int mFavoriteIconSelectedId;
+
 
     /*
      * Methods
      */
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
 
-        if(getIntent().hasExtra("isTabletLayout")) {
-            mIsTablet = getIntent().getExtras().getBoolean("isTabletLayout");
-        }
-
         // Remove action bar shadow and elevation
         getSupportActionBar().setElevation(0);
 
-        if (getIntent().hasExtra("recipeObject")) {
-            mRecipeSelected = getIntent().getExtras().getParcelable("recipeObject");
+        // Get extras
+        if(getIntent().getExtras().containsKey(IS_TABLET_LAYOUT_INTENT_KEY)) {
+            mIsTabletLayout = getIntent().getExtras().getBoolean(IS_TABLET_LAYOUT_INTENT_KEY);
+        }
+
+        if (getIntent().hasExtra(RECIPE_OBJECT_INTENT_KEY)) {
+            mRecipeSelected = getIntent().getExtras().getParcelable(RECIPE_OBJECT_INTENT_KEY);
             setTitle(getString(R.string.app_name) + " - " + mRecipeSelected.getRecipeName());
         }
 
-        // For phone layouts
-        if (getIntent().hasExtra("tabPosition")) {
-            mTabPosition = getIntent().getExtras().getInt("tabPosition");
-        }
+        // Up navigation
+        showUpButton();
 
-        if (mIsTablet) {
+        // Set up the correct layout
+        if (mIsTabletLayout) {
             setupStepsFragmentsForTablet();
         } else {
+
+            // For phone layouts
+            if (getIntent().hasExtra(TAB_POSITION_INTENT_KEY)) {
+                mTabPosition = getIntent().getExtras().getInt(TAB_POSITION_INTENT_KEY);
+            }
             setupDetailsFragmentForPhone();
-            showUpButton();
         }
     }
 
@@ -106,30 +125,40 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     /*
-     * Creates and assigns the details fragment for a fragments layout
+     * Creates and assigns the details fragment for a tablet layout
      */
     private void setupStepsFragmentsForTablet() {
         FragmentManager fragmentManager = getSupportFragmentManager();
+        mStepFragment = (StepFragment) fragmentManager.findFragmentByTag(StepsListFragment.STEP_FRAGMENT_UNIQUE_ID);
 
-        // Display the list of steps
-        StepsListFragment stepsListFragment = StepsListFragment.newInstance(mRecipeSelected);
+        if(mStepFragment == null) {
+            // Display the list of steps
+            StepsListFragment stepsListFragment = StepsListFragment.newInstance(mRecipeSelected);
+            stepsListFragment.setIsTabletLayout(mIsTabletLayout);
 
-        fragmentManager.beginTransaction()
-                .add(R.id.steps_list_fragment_view, stepsListFragment)
-                .commit();
+            fragmentManager.beginTransaction()
+                    .add(R.id.steps_list_fragment_view, stepsListFragment)
+                    .commit();
 
-        // By default, display the ingredients details first
-        IngredientsFragment ingredientsFragment = IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(),
-                mRecipeSelected.getRecipeIngredients(),
-                mRecipeSelected.getRecipeImage());
+            // By default, display the ingredients details first
+            IngredientsFragment ingredientsFragment = IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(),
+                    mRecipeSelected.getRecipeIngredients(),
+                    mRecipeSelected.getRecipeImage());
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.step_details_frame_layout, ingredientsFragment)
-                .commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_details_frame_layout, ingredientsFragment)
+                    .commit();
+        } else {
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.step_details_frame_layout, mStepFragment, StepsListFragment.STEP_FRAGMENT_UNIQUE_ID)
+                    .commit();
+        }
+
     }
 
     /*
-     * Displays an Up button
+     * Displays an Up button on an action bar
      */
     private void showUpButton() {
         ActionBar actionBar = this.getSupportActionBar();
@@ -146,14 +175,22 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.details_menu, menu);
         mMenu = menu;
+
+        // Set checkbox if the recipe is currently the widget
         mMenu.findItem(R.id.menu_widget).setChecked(WidgetUtils.isRecipeWidget(this, mRecipeSelected.getRecipeName()));
+
+        // Set the action bar favorite icon and drawable id
         mIsFavorite = setMenuFavoriteIcon();
+        setFavoriteIconSelectedId();
+
         return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        // React accordingly to item selected
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         } else if (id == R.id.menu_widget) {
@@ -168,26 +205,45 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     /**
-     * Sets the corresponding favorite icon (empty heart if the recipe is not favorite,
-     * white heart if it is favorite)
+     * Sets the corresponding favorite icon (empty heart if the recipe
+     * is not selected as favorite, white heart if it is selected as favorite)
      */
     private boolean setMenuFavoriteIcon() {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences.contains(FavoritesUtils.SHARED_PREFERENCES_FAV_RECIPES_KEY)) {
-
             HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet(FavoritesUtils.SHARED_PREFERENCES_FAV_RECIPES_KEY, null);
 
             if (set.contains(mRecipeSelected.getRecipeName())) {
-                mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, R.drawable.favorite_selected));
+                setFavoriteIconDrawable(R.drawable.favorite_selected);
                 return true;
             } else {
-                mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, R.drawable.favorite_not_selected));
+                setFavoriteIconDrawable(R.drawable.favorite_not_selected);
                 return false;
             }
         }
 
         return false;
+    }
+
+    /*
+     * Sets the favorite icon id depending of whether the recipe was
+     * selected as favorite or not
+     */
+    private void setFavoriteIconSelectedId() {
+        if (mIsFavorite) {
+            mFavoriteIconSelectedId = R.drawable.favorite_selected;
+        } else {
+            mFavoriteIconSelectedId = R.drawable.favorite_not_selected;
+        }
+    }
+
+    /*
+     * Sets the corresponding icon drawable for the Action Bar's favorite button
+     */
+    private void setFavoriteIconDrawable(int drawableResourceId) {
+        mMenu.findItem(R.id.favorite_button).setIcon(ContextCompat.getDrawable(this, drawableResourceId));
+        mFavoriteIconSelectedId = drawableResourceId;
     }
 }

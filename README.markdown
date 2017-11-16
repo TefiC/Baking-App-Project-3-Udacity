@@ -1,13 +1,13 @@
-# Baking App
+#Baking App
 
-#### Project 3 | Udacity Android Developer Nanodegree
+####Project 3 | Udacity Android Developer Nanodegree
 
 ---
 
 A Baking App powered by recipes and resources provided by Udacity on [this link](https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json). 
 
 ---
-#### Features
+####Features
 
 ---
 - When the user first launches the app, recipes will load. (If the device is a phone, they will display on a single row. Else if it's a tablet, they will display in two rows). Each recipe will display an image, its name and servings.
@@ -28,7 +28,7 @@ A Baking App powered by recipes and resources provided by Udacity on [this link]
 
 ---
 
-#### Widget
+####Widget
 
 ----
 
@@ -46,7 +46,7 @@ A Baking App powered by recipes and resources provided by Udacity on [this link]
 
 ---
 
-#### Attributions
+####Atttributions
 
 ---
 These were very helpful resources from which I found inspiration for certain elements of my code:

@@ -18,16 +18,27 @@ import java.util.ArrayList;
 public class DetailsPagerAdapter extends FragmentPagerAdapter {
 
     /*
+     * Constants
+     */
+
+    private static final String INGREDIENTS_TAB_TITLE = "Ingredients";
+    private static final String INTRODUCTION_TAB_TITLE = "Introduction";
+
+
+    /*
      * Fields
      */
+
 
     private ArrayList<String> tabTitles = new ArrayList<String>();
     private Context mContext;
     private Recipe mRecipeSelected;
 
+
     /*
      * Constructor
      */
+
 
     public DetailsPagerAdapter(FragmentManager fm, Context context,
                                Recipe recipe) {
@@ -37,19 +48,26 @@ public class DetailsPagerAdapter extends FragmentPagerAdapter {
         addTitlesDynamically();
     }
 
+
     /*
      * Methods
      */
 
+
     /**
-     * Adds the necessary titles for the tabs
+     * Adds the necessary titles for the tabs.
+     * One for the first tab, ingredients.
+     * One for the second tab, Introduction.
+     * One for each step with the corresponding step number.
      */
     private void addTitlesDynamically() {
 
-        tabTitles.add("Ingredients");
-        tabTitles.add("Introduction");
+        tabTitles.add(INGREDIENTS_TAB_TITLE);
+        tabTitles.add(INTRODUCTION_TAB_TITLE);
 
-        for(int i = 1; i < mRecipeSelected.getRecipeSteps().size() - 1; i++) {
+        int numStepsWithoutIntroduction = mRecipeSelected.getRecipeSteps().size() - 1;
+
+        for (int i = 1; i < numStepsWithoutIntroduction; i++) {
             tabTitles.add("Step " + i);
         }
     }
@@ -61,18 +79,17 @@ public class DetailsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if(position == 0) {
+        if (position == 0) {
             return IngredientsFragment.newInstance(mRecipeSelected.getRecipeName(), mRecipeSelected.getRecipeIngredients(), mRecipeSelected.getRecipeImage());
         } else if (position > 0 && position <= getCount()) {
             return StepFragment.newInstance(mRecipeSelected.getRecipeSteps().get(position - 1));
         } else {
-            throw new UnsupportedOperationException("Tabs out of bounds: " + position);
+            throw new UnsupportedOperationException("Tab out of bounds: " + position);
         }
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
-        // Generate title based on item position
         return tabTitles.get(position);
     }
 }

@@ -6,7 +6,9 @@ package com.example.android.bakingapp.DetailsActivityTests;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -27,13 +29,20 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.example.android.bakingapp.Utils.FavoritesUtils.SHARED_PREFERENCES_FAV_RECIPES_KEY;
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Test to verify Details Activity's general functionality on phones
@@ -58,10 +67,10 @@ public class DetailsActivityBasicPhoneTests {
 
     @Rule
     public ActivityTestRule<DetailsActivity> mActivityTestRule =
-            new ActivityTestRule<DetailsActivity>(DetailsActivity.class) {
+            new ActivityTestRule<DetailsActivity>(DetailsActivity.class, true, true) {
                 @Override
                 protected Intent getActivityIntent() {
-                    Context targetContext = InstrumentationRegistry.getInstrumentation()
+                    Context targetContext = getInstrumentation()
                             .getTargetContext();
                     Intent result = new Intent(targetContext, DetailsActivity.class);
 
@@ -87,6 +96,11 @@ public class DetailsActivityBasicPhoneTests {
     /*
      * Tests
      */
+
+    @Test
+    public void detailsActivityTitle_DisplaysCorrectly() {
+        onView(withText("BakingApp - " + "RecipeName")).check(matches(isDisplayed()));
+    }
 
     /*
      * Ingredients
@@ -145,5 +159,38 @@ public class DetailsActivityBasicPhoneTests {
     @Test
     public void tabPositionReceived_isSetCorrectlyAtStart() {
         onView(withText("Recipe Introduction")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clickOnFavoriteMenuIcon_TogglesDrawableResource() {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mActivityTestRule.getActivity());
+
+        ViewInteraction actionMenuItemView = onView(
+                allOf(withId(R.id.favorite_button), withContentDescription("Favorite"), isDisplayed()));
+
+        if (sharedPreferences.contains(SHARED_PREFERENCES_FAV_RECIPES_KEY)) {
+            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_selected));
+            actionMenuItemView.perform(click());
+            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_not_selected));
+        } else {
+            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_not_selected));
+            actionMenuItemView.perform(click());
+            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_selected));
+        }
+    }
+
+    @Test
+    public void overflowMenu_IsToggledOnClick() {
+
+        // Open
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        ViewInteraction addToWidgetView = onView(
+                allOf(withId(R.id.title), withText("Add to Widget"), isDisplayed()));
+        addToWidgetView.check(matches(isDisplayed()));
+
+        // Close
+        addToWidgetView.perform(click());
+        addToWidgetView.check(doesNotExist());
     }
 }

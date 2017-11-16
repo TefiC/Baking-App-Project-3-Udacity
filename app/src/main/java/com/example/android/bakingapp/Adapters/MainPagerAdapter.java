@@ -9,30 +9,43 @@ import com.example.android.bakingapp.Fragments.FavoritesFragment;
 import com.example.android.bakingapp.Fragments.HomeFragment;
 
 /**
- * An adapter to handle tabs in the main recipes gridView layout
+ * An adapter to handle tabs on the main recipes layout
  */
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
 
     /*
+     * Constants
+     */
+
+    private static final String HOME_TAB_TITLE = "Home";
+    private static final String FAVORITES_TAB_TITLE = "Favorites";
+
+
+    /*
      * Fields
      */
 
-    private String tabTitles[] = new String[]{"Home", "Favorites"};
+
+    private String tabTitles[] = new String[]{HOME_TAB_TITLE, FAVORITES_TAB_TITLE};
     private Context context;
+
 
     /*
      * Constructor
      */
+
 
     public MainPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.context = context;
     }
 
+
     /*
      * Methods
      */
+
 
     @Override
     public int getCount() {
@@ -53,7 +66,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        // Generate title based on item position
         return tabTitles[position];
     }
 }

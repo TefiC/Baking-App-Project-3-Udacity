@@ -25,12 +25,19 @@ import butterknife.ButterKnife;
 public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.RecipeViewHolder> {
 
     /*
+     * Constants
+     */
+
+    private static final String RECIPES_IMAGE_RESOURCE_PREFIX = "recipe";
+
+    /*
      * Fields
      */
 
     private Context mContext;
     private ArrayList<Recipe> mRecipesArray;
     private final RecipeAdapterOnClickHandler mRecipeOnClickHandler;
+
 
     /*
      * Constructor
@@ -44,6 +51,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
         mRecipeOnClickHandler = recipeAdapterOnClickHandler;
     }
 
+
     /*
      * Methods
      */
@@ -51,7 +59,6 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
 
     @Override
     public RecipesMainAdapter.RecipeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         Context context = parent.getContext();
 
         // Inflate layout
@@ -66,13 +73,20 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
 
     @Override
     public void onBindViewHolder(RecipesMainAdapter.RecipeViewHolder holder, int position) {
-
         Recipe recipe = mRecipesArray.get(position);
+
+        // Listener
         holder.setOnClickListener(holder.mRecipeCompleteView, recipe);
 
-        holder.mRecipeServingsView.setText(Integer.toString(recipe.getRecipeServings()));
-        holder.mRecipesNameView.setText(recipe.getRecipeName());
+        // Set up data
+        String recipeServings = Integer.toString(recipe.getRecipeServings());
+        String recipeName = recipe.getRecipeName();
 
+        // Populate views
+        holder.mRecipeServingsView.setText(recipeServings);
+        holder.mRecipesNameView.setText(recipeName);
+
+        // Image
         setImageResource(recipe, holder);
     }
 
@@ -87,23 +101,34 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
          * Views
          */
 
+        @BindView(R.id.recipe_item_name)
+        TextView mRecipesNameView;
+        @BindView(R.id.recipe_item_image)
+        ImageView mRecipeImageView;
+        @BindView(R.id.recipe_item_servings)
+        TextView mRecipeServingsView;
+
+        /*
+         * Fields
+         */
+
         private LinearLayout mRecipeCompleteView;
 
-        @BindView(R.id.recipe_item_name) TextView mRecipesNameView;
-        @BindView(R.id.recipe_item_image) ImageView mRecipeImageView;
-        @BindView(R.id.recipe_item_servings) TextView mRecipeServingsView;
+        /*
+         * Constructor
+         */
 
         public RecipeViewHolder(View itemView) {
             super(itemView);
 
+            // Bind views
             mRecipeCompleteView = (LinearLayout) itemView;
-
             ButterKnife.bind(this, mRecipeCompleteView);
         }
 
         /**
          * Sets an onClickListener to the recipe view, passing the recipe instance
-         * to the onClick method of the RecipesMainAdapter interface to further customize
+         * to the onClick interface of RecipesMainAdapter to further customize
          * the actions to be performed on click
          *
          * @param recipeView The view on which to set the listener
@@ -124,15 +149,19 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
      * If the image path is a URL it loads it using the Picasso library,
      * else it find the appropriate resource in the drawables folder
      *
-     * @param recipe The Recipe
+     * @param recipe           The Recipe
      * @param recipeViewHolder The Recipe's ViewHolder
      */
     private void setImageResource(Recipe recipe, RecipeViewHolder recipeViewHolder) {
-        if(recipe.getRecipeImage().substring(0, 6).equals("recipe")) {
+        if (recipe.getRecipeImage().substring(0, 6).equals(RECIPES_IMAGE_RESOURCE_PREFIX)) {
             int resourceId = mContext.getResources().getIdentifier(recipe.getRecipeImage(), "drawable", mContext.getPackageName());
             recipeViewHolder.mRecipeImageView.setImageResource(resourceId);
         } else {
-            Picasso.with(mContext).load(recipe.getRecipeImage()).into(recipeViewHolder.mRecipeImageView);
+            Picasso.with(mContext)
+                    .load(recipe.getRecipeImage())
+                    .placeholder(R.drawable.chef)
+                    .error(R.drawable.chef)
+                    .into(recipeViewHolder.mRecipeImageView);
         }
         recipeViewHolder.mRecipeImageView.setTag(recipe.getRecipeImage());
     }
@@ -142,7 +171,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
      */
 
     /**
-     * Interface to implement onClick handler for each view
+     * Interface to implement onClick handler for individual views
      */
     public interface RecipeAdapterOnClickHandler {
         void onClick(Recipe recipe);

@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * An adapter for the ingredients list
+ * An adapter to display the ingredients list
  */
 
 public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMainAdapter.IngredientViewHolder> {
@@ -30,18 +30,22 @@ public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMain
     private Context mContext;
     private ArrayList<Ingredient> mIngredientsList;
 
+
     /*
      * Constructor
      */
+
 
     public IngredientsMainAdapter(Context context, ArrayList<Ingredient> ingredientsList) {
         mContext = context;
         mIngredientsList = ingredientsList;
     }
 
+
     /*
      * Methods
      */
+
 
     @Override
     public IngredientsMainAdapter.IngredientViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -61,9 +65,15 @@ public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMain
     public void onBindViewHolder(IngredientsMainAdapter.IngredientViewHolder holder, int position) {
         Ingredient ingredient = mIngredientsList.get(position);
 
-        holder.mIngredientNumberView.setText(Integer.toString(position + 1));
-        holder.mIngredientNameView.setText(RecipeDataUtils.capitalizeString(ingredient.getIngredientName()));
-        holder.mIngredientQuantityUnitView.setText(ingredient.getIngredientQuantity() + " " + ingredient.getIngredientUnit());
+        // Set up data
+        String ingredientNumber = Integer.toString(position + 1);
+        String ingredientName = RecipeDataUtils.capitalizeString(ingredient.getIngredientName());
+        String ingredientFormattedQuantityUnit = ingredient.getIngredientQuantity() + " " + ingredient.getIngredientUnit();
+
+        // Populate view holder
+        holder.mIngredientNumberView.setText(ingredientNumber);
+        holder.mIngredientNameView.setText(ingredientName);
+        holder.mIngredientQuantityUnitView.setText(ingredientFormattedQuantityUnit);
     }
 
     @Override
@@ -74,7 +84,7 @@ public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMain
     public class IngredientViewHolder extends RecyclerView.ViewHolder {
 
         /*
-         * Fields
+         * Views
          */
 
         @BindView(R.id.ingredient_item_number) TextView mIngredientNumberView;
@@ -84,6 +94,7 @@ public class IngredientsMainAdapter extends RecyclerView.Adapter<IngredientsMain
         public IngredientViewHolder(View itemView) {
             super(itemView);
 
+            // Bind views
             ButterKnife.bind(this, itemView);
         }
     }

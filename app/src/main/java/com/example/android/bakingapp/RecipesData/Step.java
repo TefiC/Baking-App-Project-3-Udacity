@@ -19,9 +19,11 @@ public class Step implements Parcelable {
     private String mVideoUrl;
     private String mThumbnailUrl;
 
+
     /*
      * Constructors
      */
+
 
     public Step(int id, String shortDescription, String description, String videoUrl, String thumbnailUrl) {
         mId = id;
@@ -39,9 +41,11 @@ public class Step implements Parcelable {
         mThumbnailUrl = in.readString();
     }
 
+
     /*
      * Implementing Parcelable
      */
+
 
     @Override
     public int describeContents() {
@@ -70,9 +74,11 @@ public class Step implements Parcelable {
         }
     };
 
+
     /*
      * Getters
      */
+
 
     public int getStepId() { return mId; }
     public String getStepShortDescription() { return mShortDescription; }
@@ -80,9 +86,11 @@ public class Step implements Parcelable {
     public String getStepVideoUrl() { return mVideoUrl; }
     public String getThumbnailUrl() { return mThumbnailUrl; }
 
+
     /*
      * Setters
      */
+
 
     public void setStepId(int id) { mId = id; }
     public void setStepShortDescription(String shortDescription) { mShortDescription = shortDescription; }

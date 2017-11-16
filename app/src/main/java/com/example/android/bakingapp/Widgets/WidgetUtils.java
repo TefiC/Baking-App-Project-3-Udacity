@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -17,8 +16,6 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.RecipesData.Recipe;
 import com.squareup.picasso.Picasso;
 
-import static com.example.android.bakingapp.Activities.MainActivity.mContext;
-
 /**
  * Helper methods for widgets
  */
@@ -26,14 +23,23 @@ import static com.example.android.bakingapp.Activities.MainActivity.mContext;
 public class WidgetUtils {
 
     /*
+     * Constants
+     */
+
+    private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
+    private static final String TAB_POSITION_INTENT_KEY = "tabPosition";
+
+    /*
      * Fields
      */
 
     public static final String SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY = "recipeSelectedForWidgetName";
 
+
     /*
      * Methods
      */
+
 
     /**
      * Updates the widget's data and stores it in SharedPreferences
@@ -109,14 +115,14 @@ public class WidgetUtils {
     public static void setWidgetUI(Context context, RemoteViews views, Recipe recipe) {
 
         // Data
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
+        String recipeName = recipe.getRecipeName();
+        String recipeImage = recipe.getRecipeImage();
+        String recipeServings = Integer.toString(recipe.getRecipeServings());
 
         // UI
-        views.setTextViewText(R.id.appwidget_text, recipe.getRecipeName());
-
-        loadRecipeWidgetImage(context, views, recipe.getRecipeImage());
-
-        views.setTextViewText(R.id.appwidget_servings, Integer.toString(recipe.getRecipeServings()));
+        views.setTextViewText(R.id.appwidget_text, recipeName);
+        loadRecipeWidgetImage(context, views, recipeImage);
+        views.setTextViewText(R.id.appwidget_servings, recipeServings);
     }
 
     /**
@@ -134,8 +140,8 @@ public class WidgetUtils {
         if(recipeSelected != null) {
             // Create an Intent to launch DetailActivity when clicked
             Intent intent = new Intent(context, DetailsActivity.class);
-            intent.putExtra("recipeObject", recipeSelected);
-            intent.putExtra("tabPosition", 0);
+            intent.putExtra(RECIPE_OBJECT_INTENT_KEY, recipeSelected);
+            intent.putExtra(TAB_POSITION_INTENT_KEY, 0);
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context,
                     RecipeWidgetProvider.UNIQUE_INTENT_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -169,7 +175,7 @@ public class WidgetUtils {
     private static void loadRecipeWidgetImage(Context context, RemoteViews views, String recipeImage) {
 
         if (recipeImage.substring(0, 6).equals("recipe")) {
-            int resourceId = context.getResources().getIdentifier(recipeImage, "drawable", mContext.getPackageName());
+            int resourceId = context.getResources().getIdentifier(recipeImage, "drawable", MainActivity.mContext.getPackageName());
             views.setImageViewResource(R.id.appwidget_image, resourceId);
         } else {
 
@@ -178,14 +184,22 @@ public class WidgetUtils {
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, RecipeWidgetProvider.class));
 
             Picasso.with(context).load(recipeImage)
+                    .placeholder(R.drawable.chef)
+                    .error(R.drawable.chef)
                     .into(views, R.id.appwidget_image, appWidgetIds);
         }
     }
 
+    /**
+     * Determines if the recipe is selected to be displayed on the widget or not
+     *
+     * @param context The context
+     * @param recipeName The recipe name
+     *
+     * @return True if the recipe is selected to be displayed on the widget. Else, false
+     */
     public static boolean isRecipeWidget(Context context, String recipeName) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        Log.v("SHARED", "PREFS " + sharedPreferences.getString(WidgetUtils.SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY, null));
 
         if (sharedPreferences.contains(WidgetUtils.SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY)) {
             return sharedPreferences.getString(WidgetUtils.SHARED_PREFERENCES_RECIPE_NAME_WIDGET_KEY, null)

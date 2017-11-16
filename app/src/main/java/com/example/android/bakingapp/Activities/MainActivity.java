@@ -20,36 +20,63 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     /*
+     * Views
+     */
+
+    @Nullable
+    @BindView(R.id.divider)
+    View mDivider;
+
+
+    /*
+     * Constants
+     */
+
+
+    private static final String TAG_RECIPES_LIST_FRAGMENT = "recipes_list_fragment";
+    private static final String TAG_COUNTING_IDLING_RESOURCE = "NEW_LOADER";
+
+
+    /*
      * Fields
      */
 
+
+    // Activity
     public static boolean mTabletLayout;
     public static Context mContext;
 
-    public static CountingIdlingResource mIdlingResource = new CountingIdlingResource("NEW_LOADER");
+    // Testing Idling resource
+    public static CountingIdlingResource mIdlingResource = new CountingIdlingResource(TAG_COUNTING_IDLING_RESOURCE);
 
-    @Nullable @BindView (R.id.divider) View mDivider;
+    // Fragment
     private RecipesListFragment mRecipesListFragment;
 
-    private static final String TAG_RECIPES_LIST_FRAGMENT = "recipes_list_fragment";
 
     /*
      * Methods
      */
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ButterKnife.bind(this);
-
         mContext = this;
 
-        getSupportActionBar().setElevation(0);
+        // Bind views
+        ButterKnife.bind(this);
 
+        // Remove action bar elevation
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setElevation(0);
+        }
+
+        // Determine if the layout should be
+        // for phone or tablet
         isTabletLayout();
 
+        // Set the corresponding fragments
         setFragment();
     }
 
@@ -57,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
      * Determines if the layout should be for phone or tablet
      */
     private boolean isTabletLayout() {
-        if(mDivider != null) {
+        if (mDivider != null) {
             mTabletLayout = true;
             return true;
         } else {
@@ -67,22 +94,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Only called from test, creates and returns a new CountingIdlingResource
+     * Only called from testing, creates and returns a new CountingIdlingResource
      */
     @VisibleForTesting
     @NonNull
     public IdlingResource getIdlingResource() {
         if (mIdlingResource == null) {
-            mIdlingResource = new CountingIdlingResource("NEW_LOADER");
+            mIdlingResource = new CountingIdlingResource(TAG_COUNTING_IDLING_RESOURCE);
         }
         return mIdlingResource;
     }
 
+    /*
+     * Sets the corresponding fragment for the main activity
+     */
     private void setFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         mRecipesListFragment = (RecipesListFragment) fragmentManager.findFragmentByTag(TAG_RECIPES_LIST_FRAGMENT);
 
-        if(mRecipesListFragment == null) {
+        if (mRecipesListFragment == null) {
 
             mRecipesListFragment = new RecipesListFragment();
 
@@ -95,7 +125,5 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.master_recipes_list_fragment, mRecipesListFragment, TAG_RECIPES_LIST_FRAGMENT)
                     .commit();
         }
-
-
     }
 }

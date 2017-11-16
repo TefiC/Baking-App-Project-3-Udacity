@@ -35,9 +35,11 @@ class IngredientsListRemoteFactory implements RemoteViewsService.RemoteViewsFact
     private Context mContext;
     private ArrayList<Ingredient> mIngredientsArrayList;
 
+
     /*
      * Methods
      */
+
 
     public IngredientsListRemoteFactory(Context context) {
         mContext = context;
@@ -80,23 +82,44 @@ class IngredientsListRemoteFactory implements RemoteViewsService.RemoteViewsFact
         RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.ingredient_item);
         Ingredient ingredient = mIngredientsArrayList.get(i);
 
-        views.setTextViewText(R.id.ingredient_item_number, Integer.toString(i + 1));
-        views.setTextViewText(R.id.ingredient_item_name, RecipeDataUtils.capitalizeString(ingredient.getIngredientName()));
-        views.setTextViewText(R.id.ingredient_item_quantity_unit, ingredient.getIngredientQuantity() + " " + ingredient.getIngredientUnit());
+        String ingredientItemNumber = Integer.toString(i + 1);
+        String ingredientItemName = RecipeDataUtils.capitalizeString(ingredient.getIngredientName());
+        String ingredientItemQuantity = ingredient.getIngredientQuantity() + " " + ingredient.getIngredientUnit();
+
+        // Set content
+        views.setTextViewText(R.id.ingredient_item_number, ingredientItemNumber);
+        views.setTextViewText(R.id.ingredient_item_name, ingredientItemName);
+        views.setTextViewText(R.id.ingredient_item_quantity_unit, ingredientItemQuantity);
 
         if(MainActivity.mTabletLayout) {
-
-            views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
-            views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 18);
-            views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 16);
-
+            setTextFormatForTablet(views);
         } else {
-            views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
-            views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 12);
-            views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 10);
+            setTextFormatForPhone(views);
         }
 
         return views;
+    }
+
+    /**
+     * Sets the text format for the remove views text views for tablets
+     *
+     * @param views RemoteViews instance that contains the views to be formatted
+     */
+    private void setTextFormatForTablet(RemoteViews views) {
+        views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
+        views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 18);
+        views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 16);
+    }
+
+    /**
+     * Sets the text format for the remove views text views for phone
+     *
+     * @param views RemoteViews instance that contains the views to be formatted
+     */
+    private void setTextFormatForPhone(RemoteViews views) {
+        views.setTextViewTextSize(R.id.ingredient_item_number, COMPLEX_UNIT_SP, 12);
+        views.setTextViewTextSize(R.id.ingredient_item_name, COMPLEX_UNIT_SP, 12);
+        views.setTextViewTextSize(R.id.ingredient_item_quantity_unit, COMPLEX_UNIT_SP, 10);
     }
 
     @Override

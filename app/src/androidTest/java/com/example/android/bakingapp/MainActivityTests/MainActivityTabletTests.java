@@ -29,7 +29,7 @@ public class MainActivityTabletTests {
 
     @Rule
     public IntentsTestRule<MainActivity> intentsTestRule =
-            new IntentsTestRule<>(MainActivity.class);
+            new IntentsTestRule<>(MainActivity.class, true, true);
 
     @Before
     public void registerIdlingResource() {

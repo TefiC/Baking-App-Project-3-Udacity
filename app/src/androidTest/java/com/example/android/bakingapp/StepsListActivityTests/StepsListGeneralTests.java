@@ -82,7 +82,7 @@ public class StepsListGeneralTests {
 
     @Test
     public void stepsList_IsPopulatedCorrectly() {
-        onView(withId(R.id.steps_list_recycler_view)).check(new RecyclerViewNumberOfItemsAssertion(mRecipe.getRecipeSteps().size()));
+        onView(withId(R.id.steps_list_recycler_view)).check(new RecyclerViewNumberOfItemsAssertion(mRecipe.getRecipeSteps().size() + 1));
     }
 
     @Test

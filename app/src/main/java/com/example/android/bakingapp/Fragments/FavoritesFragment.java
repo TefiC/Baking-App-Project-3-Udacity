@@ -41,29 +41,46 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
      * Views
      */
 
-    @BindView(R.id.main_favorite_recipes_grid_layout) RecyclerView mMainRecipesLayout;
-    @BindView(R.id.no_favorites_main_layout) LinearLayout mNoFavoritesLayout;
+    @BindView(R.id.main_favorite_recipes_grid_layout)
+    RecyclerView mMainRecipesLayout;
+    @BindView(R.id.no_favorites_main_layout)
+    LinearLayout mNoFavoritesLayout;
     private View mRootView;
+
+    /*
+     * Constants
+     */
+
+    private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
+    private static final String IS_TABLET_LAYOUT_INTENT_KEY = "isTabletLayout";
 
     /*
      * Fields
      */
 
     public static ArrayList<Recipe> mFavoriteRecipesArrayList = new ArrayList<Recipe>();
+
+    // Butter Knife
     private Unbinder unbinder;
 
     /*
      * Methods
      */
 
+    /*
+     * Returns a new instance of the fragment
+     */
     public static FavoritesFragment newInstance() {
         return new FavoritesFragment();
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.favorites_fragment, container, false);
+
+        // Bind views
         unbinder = ButterKnife.bind(this, mRootView);
 
         return mRootView;
@@ -72,11 +89,14 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
     @Override
     public void onStart() {
 
+        // Determine favorite recipes
         populateFavorites(RecipesListFragment.mRecipesArray);
 
-        if(mFavoriteRecipesArrayList.size() > 0) {
+        // If there are favorites selected display them
+        if (mFavoriteRecipesArrayList.size() > 0) {
             mMainRecipesLayout.setVisibility(View.VISIBLE);
             setFavoriteRecipesAdapter();
+            // Else, display a "No favorites selected" screen
         } else {
             toggleNoFavoritesScreen();
             setFavoriteRecipesAdapter();
@@ -84,38 +104,31 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
         super.onStart();
     }
 
-    private String[] fetchFavoriteRecipesNamesFromDB() {
-        return new String[]{};
-    }
-
-    private Recipe[] filterFavoriteRecipes(String[] favoriteRecipesNames, Recipe[] recipes) {
-        return new Recipe[]{};
-    }
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Unbind views
         unbinder.unbind();
     }
 
     @Override
     public void onClick(Recipe recipe) {
 
+        Intent intent;
+
         if (mTabletLayout) {
-            Intent intent = new Intent(getActivity(), DetailsActivity.class);
-            intent.putExtra("recipeObject", recipe);
-            intent.putExtra("isTabletLayout", MainActivity.mTabletLayout);
-            startActivity(intent);
+            intent = new Intent(getActivity(), DetailsActivity.class);
         } else {
-            Intent intent = new Intent(getActivity(), StepsListActivity.class);
-            intent.putExtra("recipeObject", recipe);
-            intent.putExtra("isTabletLayout", MainActivity.mTabletLayout);
-            startActivity(intent);
+            intent = new Intent(getActivity(), StepsListActivity.class);
         }
+
+        intent.putExtra(RECIPE_OBJECT_INTENT_KEY, recipe);
+        intent.putExtra(IS_TABLET_LAYOUT_INTENT_KEY, MainActivity.mTabletLayout);
+        startActivity(intent);
     }
 
     /**
-     * Populates favorite movies array
+     * Populates favorite recipes array
      *
      * @param recipesArray The complete array of recipes without filtering favorites
      */
@@ -133,7 +146,7 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
     }
 
     /**
-     * Sets the Movie Adapter for the main layout that will contain movie posters
+     * Sets the recipes Adapter for the main layout that will contain recipes information
      */
     private void setFavoriteRecipesAdapter() {
 
@@ -164,13 +177,12 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
         }
     }
 
-
     /**
-     * Determines if the No Favorites screen should be displayed in case there
+     * Determines if the "No Favorites" screen should be displayed in case there
      * are no favorite recipes selected
      */
     private void toggleNoFavoritesScreen() {
-        if(mFavoriteRecipesArrayList.size() > 0) {
+        if (mFavoriteRecipesArrayList.size() > 0) {
             mNoFavoritesLayout.setVisibility(View.GONE);
             mMainRecipesLayout.setVisibility(View.VISIBLE);
         } else {

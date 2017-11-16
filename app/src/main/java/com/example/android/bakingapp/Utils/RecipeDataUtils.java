@@ -21,9 +21,11 @@ import java.util.ArrayList;
 
 public class RecipeDataUtils {
 
+
     /*
      * Methods
      */
+
 
     /**
      * Populates the RecipeListFragment's recipes array
@@ -54,7 +56,7 @@ public class RecipeDataUtils {
      *
      * @param recipeJSON The recipe's data as a JSONObject
      *
-     * @return A Recipe
+     * @return A Recipe instance
      */
     private static Recipe createRecipeObject(JSONObject recipeJSON) {
 

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
@@ -25,6 +26,8 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.intent.Intents.intended;
+import static android.support.test.espresso.intent.matcher.IntentMatchers.hasExtraWithKey;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -43,15 +46,18 @@ public class MainActivityBasicGeneralTests {
      */
 
     private static final int mNumberOfRecipes = 4;
+    private static final String FAVORITES_TAB_TEXT = "Favorites";
+    private static final String FAVORITE_RECIPE_SELECTED_NAME = "Cheesecake";
+
+    /*
+     * Fields
+     */
+
+    private IdlingResource mIdlingResource;
     private Intent mIntent;
     private SharedPreferences.Editor mPreferencesEditor;
     private Context mContext;
 
-    /*
-     * Field
-     */
-
-    private IdlingResource mIdlingResource;
 
     /*
      * Tests set up
@@ -70,14 +76,13 @@ public class MainActivityBasicGeneralTests {
     }
 
     /*
-     * Methods
+     * Tests
      */
 
     @Test
     public void activityTitle_IsDisplayedCorrectly() {
         // Set up
-        launchActivity();
-        registerIdlingResource();
+        setUpActivity();
 
         onView(withText("BakingApp")).check(matches(isDisplayed()));
     }
@@ -85,20 +90,17 @@ public class MainActivityBasicGeneralTests {
     @Test
     public void recipesList_IsPopulatedCorrectly() {
         // Set up
-        launchActivity();
-        registerIdlingResource();
+        setUpActivity();
 
         onView(withId(R.id.main_recipes_grid_layout)).check(new RecyclerViewNumberOfItemsAssertion(mNumberOfRecipes));
     }
 
-
     @Test
     public void clickFavoritesTab_DisplaysEmptyMessageIfNoFavoritesSelected() {
         // Set up
-        launchActivity();
-        registerIdlingResource();
+        setUpActivity();
 
-        onView(withText("Favorites")).perform(click());
+        onView(withText(FAVORITES_TAB_TEXT)).perform(click());
         onView(withId(R.id.no_favorites_main_layout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
     }
 
@@ -107,10 +109,9 @@ public class MainActivityBasicGeneralTests {
 
         // Set up
         addRecipeToSharedPreferences();
-        launchActivity();
-        registerIdlingResource();
+        setUpActivity();
 
-        onView(withText("Favorites")).perform(click());
+        onView(withText(FAVORITES_TAB_TEXT)).perform(click());
         onView(withId(R.id.no_favorites_main_layout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
         onView(withId(R.id.main_favorite_recipes_grid_layout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)));
 
@@ -121,15 +122,36 @@ public class MainActivityBasicGeneralTests {
 
     @Test
     public void clickFavoriteTabAndHome_RetainsData() {
-        // Set up
-        launchActivity();
-        registerIdlingResource();
+        setUpActivity();
 
         onView(withText("Home")).perform(click());
         onView(withId(R.id.main_recipes_grid_layout)).check(new RecyclerViewNumberOfItemsAssertion(mNumberOfRecipes));
-        onView(withText("Favorites")).perform(click());
+        onView(withText(FAVORITES_TAB_TEXT)).perform(click());
         onView(withText("Home")).perform(click());
         onView(withId(R.id.main_recipes_grid_layout)).check(new RecyclerViewNumberOfItemsAssertion(mNumberOfRecipes));
+    }
+
+    @Test
+    public void clickOnRecipe_LaunchesChosenRecipeDetails() {
+        setUpActivity();
+
+        onView(withId(R.id.main_recipes_grid_layout)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withText("BakingApp - Nutella Pie")).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clickOnRecipe_SendIntentWithRecipeObject() {
+        setUpActivity();
+
+        onView(withId(R.id.main_recipes_grid_layout)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        intended(hasExtraWithKey("recipeObject"));
+    }
+
+    @Test
+    public void progressBar_IsHiddenAfterLoadingHasFinished() {
+        setUpActivity();
+
+        onView(withId(R.id.main_progress_bar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
     }
 
     /*
@@ -137,27 +159,34 @@ public class MainActivityBasicGeneralTests {
      */
 
     /*
+     * Launches the activity and registers the idling resource
+     */
+    private void setUpActivity() {
+        launchActivity();
+        registerIdlingResource();
+    }
+
+    /*
      * Register an idling resource to stop the test's execution until the
      * asynchronous operation is completed
      */
-    public void registerIdlingResource() {
+    private void registerIdlingResource() {
         IdlingRegistry.getInstance().register(intentsTestRule.getActivity().getIdlingResource());
     }
 
     /*
      * Launches the activity being tested
      */
-    public void launchActivity() {
+    private void launchActivity() {
         intentsTestRule.launchActivity(mIntent);
     }
 
     /*
      * Adds the string "Cheesecake" to shared preferences
      */
-    public void addRecipeToSharedPreferences() {
-        HashSet<String> stringsSet = new HashSet<String>() {
-        };
-        stringsSet.add("Cheesecake");
+    private void addRecipeToSharedPreferences() {
+        HashSet<String> stringsSet = new HashSet<String>() {};
+        stringsSet.add(FAVORITE_RECIPE_SELECTED_NAME);
         mPreferencesEditor.putStringSet(SHARED_PREFERENCES_FAV_RECIPES_KEY, stringsSet);
 
         mPreferencesEditor.apply();
@@ -167,7 +196,7 @@ public class MainActivityBasicGeneralTests {
      * Removes the set of strings that represent favorite recipes
      * from Shared Preferences
      */
-    public void removeRecipeFromSharedPreferences() {
+    private void removeRecipeFromSharedPreferences() {
         mPreferencesEditor.remove(SHARED_PREFERENCES_FAV_RECIPES_KEY);
         mPreferencesEditor.apply();
     }

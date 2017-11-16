@@ -40,40 +40,54 @@ public class IngredientsFragment extends Fragment {
     @BindView(R.id.ingredients_recycler_view)
     RecyclerView mIngredientsRecyclerView;
 
+
     /*
      * Constants
      */
+
 
     private static final String INGREDIENTS_ARRAY_KEY = "ingredients_array";
     private static final String RECIPE_NAME_KEY = "recipe_name";
     private static final String RECIPE_IMAGE_KEY = "recipe_image";
 
+
     /*
      * Fields
      */
+
 
     private String mRecipeName;
     private ArrayList<Ingredient> mIngredientsArray;
     private String mRecipeImage;
 
-    // For Butter Knife
+    // Butter Knife
     private Unbinder unbinder;
+
 
     /*
      * Methods
      */
 
+
+    /**
+     * Method that returns an instance of the fragment, adding extras
+     * passed as parameters
+     *
+     * @param recipeName The recipe's name
+     * @param ingredientArrayList The recipe's ingredients
+     * @param recipeImage The recipe image URL or resource name
+     *
+     * @return An IngredientsFragment instance with arguments
+     */
     public static IngredientsFragment newInstance(String recipeName, ArrayList<Ingredient> ingredientArrayList, String recipeImage) {
 
         IngredientsFragment fragment = new IngredientsFragment();
 
+        // Add arguments
         Bundle args = new Bundle();
-
-        // Add arguments to the fragment
         args.putParcelableArrayList(INGREDIENTS_ARRAY_KEY, ingredientArrayList);
         args.putString(RECIPE_NAME_KEY, recipeName);
         args.putString(RECIPE_IMAGE_KEY, recipeImage);
-
         fragment.setArguments(args);
 
         return fragment;
@@ -104,13 +118,15 @@ public class IngredientsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.ingredients_fragment, container, false);
+
+        // Bind views
         unbinder = ButterKnife.bind(this, rootView);
 
         // Populate data
         loadRecipeImage(mRecipeImageView);
         mRecipeNameView.setText(mRecipeName);
 
-        // Adapter
+        // Set Adapter
         setIngredientsAdapter();
 
         return rootView;
@@ -123,14 +139,15 @@ public class IngredientsFragment extends Fragment {
      * @param recipeImageView The ImageView where the image will be loaded
      */
     private void loadRecipeImage(ImageView recipeImageView) {
-
-        int numResourceTag = -1;
-
         if (mRecipeImage.substring(0, 6).equals("recipe")) {
             int resourceId = getActivity().getResources().getIdentifier(mRecipeImage, "drawable", getActivity().getPackageName());
             recipeImageView.setImageResource(resourceId);
         } else {
-            Picasso.with(getActivity()).load(mRecipeImage).into(recipeImageView);
+            Picasso.with(getActivity())
+                    .load(mRecipeImage)
+                    .placeholder(R.drawable.chef)
+                    .error(R.drawable.chef)
+                    .into(recipeImageView);
         }
         recipeImageView.setTag(mRecipeImage);
     }
@@ -139,7 +156,6 @@ public class IngredientsFragment extends Fragment {
      * Sets the ingredients RecyclerView adapter
      */
     private void setIngredientsAdapter() {
-
         // Create and apply the layout manager
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mIngredientsRecyclerView.setLayoutManager(mLinearLayoutManager);

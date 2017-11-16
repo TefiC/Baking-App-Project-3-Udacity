@@ -32,9 +32,11 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
     private static final String INTRODUCTION_CARD_TITLE = "Introduction";
     private static final String STEP_CARD_TITLE = "Step";
 
+
     /*
      * Fields
      */
+
 
     private Context mContext;
     private ArrayList<Step> mStepsArrayList;
@@ -42,9 +44,11 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
     private final StepOnClickHandler mStepOnClickHandler;
     private final IngredientOnClickHandler mIngredientOnClickHandler;
 
+
     /*
      * Constructor
      */
+
 
     public StepsListAdapter(Context context, ArrayList<Step> stepsArrayList,
                             ArrayList<Ingredient> ingredientArrayList, StepOnClickHandler stepAdapterOnClickHandler,
@@ -56,9 +60,11 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
         mIngredientOnClickHandler = ingredientOnClickHandler;
     }
 
+
     /*
      * Methods
      */
+
 
     @Override
     public StepsListAdapter.StepViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -111,17 +117,19 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
 
     @Override
     public int getItemCount() {
-        return mStepsArrayList.size();
+        return mStepsArrayList.size() + 1;
     }
 
     public class StepViewHolder extends RecyclerView.ViewHolder {
 
         /*
-         * Fields
+         * Views
          */
 
+        // Main layout
         @BindView(R.id.step_card_main_layout) LinearLayout mStepCardMainLayout;
 
+        // Views
         @BindView(R.id.step_card_title) TextView mStepCardTitle;
         @BindView(R.id.step_card_description) TextView mStepCardDescription;
         @BindView(R.id.step_card_video) ImageView mStepCardVideo;
@@ -130,6 +138,7 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
         public StepViewHolder(View itemView) {
             super(itemView);
 
+            // Bind views
             ButterKnife.bind(this, itemView);
         }
 
@@ -151,8 +160,8 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
         }
 
         /**
-         * Sets an onClickListener to the ingredient view, passing the ingredient instance
-         * to the onClick method of the StepsListAdapter interface to further customize
+         * Sets an onClickListener to the ingredient view, passing an ingredient instance
+         * to the onClick interface of StepsListAdapter to further customize
          * the actions to be performed on click
          *
          * @param ingredientsView The view on which to set the listener
@@ -217,14 +226,14 @@ public class StepsListAdapter extends RecyclerView.Adapter<StepsListAdapter.Step
     }
 
     /**
-     * Interface to implement onClick handler for each view
+     * Interface to implement onClick handler for each Step view
      */
     public interface StepOnClickHandler {
         void onClick(Step step, int position);
     }
 
     /**
-     * Interface to implement onClick handler for each view
+     * Interface to implement onClick handler for the Ingredients view
      */
     public interface IngredientOnClickHandler {
         void onClick(ArrayList<Ingredient> ingredient, int position);

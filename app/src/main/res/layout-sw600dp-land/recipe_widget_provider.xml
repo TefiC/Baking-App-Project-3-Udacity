@@ -42,8 +42,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.6"
             android:background="@color/colorPrimary"
-            android:scaleType="centerCrop"
-            android:src="@drawable/recipe1" />
+            android:scaleType="centerCrop" />
 
         <!--Servings main layout-->
         <LinearLayout
@@ -54,7 +53,8 @@
             android:layout_weight="0.15"
             android:background="@color/colorAccent"
             android:gravity="center"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <!--Servings logo-->
             <ImageView
@@ -80,7 +80,7 @@
     <ListView
         android:id="@+id/appwidget_ingredients_list_view"
         android:layout_width="0dp"
-        android:layout_weight="1.5"
+        android:layout_weight="2"
         android:layout_height="match_parent"
         android:background="@color/colorPrimary"
         android:visibility="gone">
@@ -94,7 +94,7 @@
         android:id="@+id/appwidget_empty_ingredients_list"
         android:orientation="vertical"
         android:layout_width="0dp"
-        android:layout_weight="1.5"
+        android:layout_weight="2"
         android:layout_height="match_parent"
         android:gravity="center"
         android:visibility="gone"

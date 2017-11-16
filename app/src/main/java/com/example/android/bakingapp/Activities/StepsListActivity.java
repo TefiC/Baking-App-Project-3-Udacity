@@ -19,37 +19,45 @@ import com.example.android.bakingapp.RecipesData.Recipe;
 public class StepsListActivity extends AppCompatActivity {
 
     /*
+     * Constants
+     */
+
+    private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
+
+
+    /*
      * Fields
      */
 
+
     private Recipe mRecipeObject;
+
 
     /*
      * Methods
      */
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.steps_list_activity);
 
-        showUpButton();
+        displayUpButton();
 
-        if(getIntent().hasExtra("recipeObject")) {
-            mRecipeObject = getIntent().getExtras().getParcelable("recipeObject");
+        if (getIntent().hasExtra(RECIPE_OBJECT_INTENT_KEY)) {
+            mRecipeObject = getIntent().getExtras().getParcelable(RECIPE_OBJECT_INTENT_KEY);
             setupStepListFragment();
             setTitle(getString(R.string.app_name) + " - " + mRecipeObject.getRecipeName());
         }
-
-
     }
 
     /*
      * Sets up the fragment to display the steps
      */
     private void setupStepListFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
         StepsListFragment stepsListFragment = StepsListFragment.newInstance(mRecipeObject);
 
         fragmentManager.beginTransaction()
@@ -58,11 +66,11 @@ public class StepsListActivity extends AppCompatActivity {
     }
 
     /*
-     * Displays an Up button
+     * Displays a button for up navigation from this activity
      */
-    private void showUpButton() {
+    private void displayUpButton() {
         ActionBar actionBar = this.getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.setDisplayShowHomeEnabled(true);
         }
     }
@@ -70,7 +78,7 @@ public class StepsListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }
         return super.onOptionsItemSelected(item);

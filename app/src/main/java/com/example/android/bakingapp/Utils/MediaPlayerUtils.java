@@ -35,19 +35,27 @@ import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayou
 public class MediaPlayerUtils {
 
     /*
+     * Constants
+     */
+
+    private static final String USER_AGENT_STRING = "BakingApp";
+
+
+    /*
      * Fields
      */
+
 
     private static boolean mIsExoPlayerFullScreen;
     private static Dialog mFullScreenDialog;
     public static MediaSessionCompat mMediaSession;
     public static PlaybackStateCompat.Builder mStateBuilder;
 
-    public ImageView mFullScreenIcon;
 
     /*
      * Methods
      */
+
 
     /**
      * Initializes ExoPlayer on a SimpleExoPlayerView
@@ -96,7 +104,7 @@ public class MediaPlayerUtils {
      */
     private static MediaSource setupMediaSource(Context context, String videoUrlString) {
         // Setup Media Source
-        String userAgent = Util.getUserAgent(context, "BakingApp");
+        String userAgent = Util.getUserAgent(context, USER_AGENT_STRING);
         return new ExtractorMediaSource(Uri.parse(videoUrlString),
                 new DefaultDataSourceFactory(context, userAgent),
                 new DefaultExtractorsFactory(),
@@ -104,9 +112,11 @@ public class MediaPlayerUtils {
                 null);
     }
 
+
     /*
      * Full Screen
      */
+
 
     /**
      * Initializes a full screen dialog
@@ -116,7 +126,7 @@ public class MediaPlayerUtils {
      * @param rootView      The RootView where the dialog will be attached
      */
     public static void initFullscreenDialog(final Context context, final SimpleExoPlayerView exoPlayerView,
-                                            final LinearLayout rootView) {
+                                            final LinearLayout rootView, final SimpleExoPlayer exoPlayer) {
 
         PlaybackControlView controlView = exoPlayerView.findViewById(R.id.exo_controller);
         final ImageView fullScreenIcon = controlView.findViewById(R.id.exo_fullscreen_icon);
@@ -124,7 +134,8 @@ public class MediaPlayerUtils {
         mFullScreenDialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
             public void onBackPressed() {
                 if (mIsExoPlayerFullScreen) {
-                    closeFullscreenDialog(context, exoPlayerView, rootView, fullScreenIcon);
+                    closeFullscreenDialog(context, exoPlayerView, rootView, fullScreenIcon, exoPlayer);
+                    releaseExoPlayer(exoPlayer);
                 }
                 super.onBackPressed();
             }
@@ -139,7 +150,7 @@ public class MediaPlayerUtils {
      * @param rootView            The layout's root view
      */
     public static void initFullscreenButton(final Context context, final SimpleExoPlayerView simpleExoPlayerView,
-                                            final LinearLayout rootView) {
+                                            final LinearLayout rootView, final SimpleExoPlayer exoPlayer) {
 
         PlaybackControlView controlView = simpleExoPlayerView.findViewById(R.id.exo_controller);
         final ImageView fullScreenIcon = controlView.findViewById(R.id.exo_fullscreen_icon);
@@ -150,7 +161,7 @@ public class MediaPlayerUtils {
                 if (!mIsExoPlayerFullScreen) {
                     openFullscreenDialog(context, simpleExoPlayerView, fullScreenIcon);
                 } else {
-                    closeFullscreenDialog(context, simpleExoPlayerView, rootView, fullScreenIcon);
+                    closeFullscreenDialog(context, simpleExoPlayerView, rootView, fullScreenIcon, exoPlayer);
                 }
             }
         });
@@ -165,11 +176,18 @@ public class MediaPlayerUtils {
      */
     private static void openFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView, ImageView fullScreenIcon) {
 
-        ((ViewGroup) exoPlayerView.getParent()).removeView(exoPlayerView);
+        ViewGroup parentView = (ViewGroup) exoPlayerView.getParent();
+        parentView.removeView(exoPlayerView);
+
+        // Update view
         mFullScreenDialog.addContentView(exoPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_skrink));
+
+        // Update data
         mIsExoPlayerFullScreen = true;
         exoPlayerView.findViewById(R.id.exo_fullscreen_icon).setTag(R.drawable.ic_fullscreen_skrink);
+
+        // Show the dialog
         mFullScreenDialog.show();
     }
 
@@ -183,94 +201,80 @@ public class MediaPlayerUtils {
      * @param fullScreenIcon ExoPlayer's full screen icon view
      */
     private static void closeFullscreenDialog(Context context, SimpleExoPlayerView exoPlayerView,
-                                              LinearLayout rootView, ImageView fullScreenIcon) {
+                                              LinearLayout rootView, ImageView fullScreenIcon, SimpleExoPlayer exoPlayer) {
 
-        ((ViewGroup) exoPlayerView.getParent()).removeView(exoPlayerView);
-        ((LinearLayout) rootView.findViewById(R.id.step_main_layout)).addView(exoPlayerView, 0);
+        ViewGroup parentView = (ViewGroup) exoPlayerView.getParent();
+        LinearLayout stepMainLayout = rootView.findViewById(R.id.step_main_layout);
+
+        parentView.removeView(exoPlayerView);
+        stepMainLayout.addView(exoPlayerView, 0);
+
+        boolean isPortrait = context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
 
         // If the phone is in portrait orientation
-        if (context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (isPortrait) {
             if (mTabletLayout) {
-                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
+                setExoPlayerLayoutParams(context,
+                        isPortrait,
+                        mTabletLayout,
+                        exoPlayerView,
+                        context.getResources().getInteger(R.integer.exo_player_tablet_height));
             } else {
-                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_phone_height), context)));
+                setExoPlayerLayoutParams(context,
+                        isPortrait,
+                        mTabletLayout,
+                        exoPlayerView,
+                        context.getResources().getInteger(R.integer.exo_player_phone_height));
             }
 
-            // If the phone is in landscape orientation
+        // If the phone is in landscape orientation
         } else {
             if (mTabletLayout) {
-                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_tablet_height), context)));
+                setExoPlayerLayoutParams(context,
+                        isPortrait,
+                        mTabletLayout,
+                        exoPlayerView,
+                        context.getResources().getInteger(R.integer.exo_player_tablet_height));
             } else {
-                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(RecipeDataUtils.convertDpToPixels(context.getResources().getInteger(R.integer.exo_player_phone_land_width), context), ViewGroup.LayoutParams.MATCH_PARENT, 1.5f));
+                setExoPlayerLayoutParams(context,
+                        isPortrait,
+                        mTabletLayout,
+                        exoPlayerView,
+                        context.getResources().getInteger(R.integer.exo_player_phone_land_width));
             }
         }
 
         mIsExoPlayerFullScreen = false;
         exoPlayerView.findViewById(R.id.exo_fullscreen_icon).setTag(R.drawable.ic_fullscreen_expand);
-        mFullScreenDialog.dismiss();
+
+        // Change full screen icon
         fullScreenIcon.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_fullscreen_expand));
+
+        // Release player and close dialog
+        releaseExoPlayer(exoPlayer);
+        mFullScreenDialog.dismiss();
     }
 
     /**
-     * Initializes the Media Session
+     * Sets the layout parameters for an ExoPlayerSimpleView
+     *
+     * @param context       The context
+     * @param exoPlayerView The ExoPlayerSimpleView
+     * @param dimension     The dimension in dp to be set
      */
-    public static void initializeMediaSession(Context context, String tag, SimpleExoPlayer exoPlayer) {
-
-        // Create a MediaSessionCompat.
-        mMediaSession = new MediaSessionCompat(context, tag);
-
-        // Enable callbacks from MediaButtons and TransportControls.
-        mMediaSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        // Don't restart the player when the app is not visible.
-        mMediaSession.setMediaButtonReceiver(null);
-
-        mStateBuilder = new PlaybackStateCompat.Builder()
-                .setActions(
-                        PlaybackStateCompat.ACTION_PLAY |
-                                PlaybackStateCompat.ACTION_PAUSE |
-                                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                                PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
-                                PlaybackStateCompat.ACTION_PLAY_PAUSE);
-
-        mMediaSession.setPlaybackState(mStateBuilder.build());
-
-        mMediaSession.setCallback(new MySessionCallback(exoPlayer));
-
-        // Start media session
-        mMediaSession.setActive(true);
-    }
-
-    /**
-     * Media Session Callback
-     */
-
-    public static class MySessionCallback extends MediaSessionCompat.Callback {
-
-        private SimpleExoPlayer mExoPlayer;
-
-        public MySessionCallback(SimpleExoPlayer exoPlayer) {
-            mExoPlayer = exoPlayer;
+    private static void setExoPlayerLayoutParams(Context context, boolean isPortrait, boolean isTablet, SimpleExoPlayerView exoPlayerView, int dimension) {
+        if(!isTablet) {
+            if (isPortrait) {
+                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        RecipeDataUtils.convertDpToPixels(dimension, context)));
+            } else {
+                exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(RecipeDataUtils.convertDpToPixels(dimension, context),
+                        ViewGroup.LayoutParams.MATCH_PARENT, 1.5f));
+            }
+        } else {
+            exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    RecipeDataUtils.convertDpToPixels(dimension, context)));
         }
 
-        @Override
-        public void onPlay() {
-            mExoPlayer.setPlayWhenReady(true);
-        }
-
-        @Override
-        public void onPause() {
-            mExoPlayer.setPlayWhenReady(false);
-        }
-
-        @Override
-        public void onSkipToPrevious() {
-            mExoPlayer.seekTo(0);
-        }
     }
 }

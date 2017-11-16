@@ -40,26 +40,45 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
 
     @BindView(R.id.steps_list_recycler_view) RecyclerView mStepListRecyclerView;
 
+
+    /*
+     * Constants
+     */
+
+    public static final String STEP_FRAGMENT_UNIQUE_ID = "stepFragment";
+    private static final String RECIPE_KEY = "recipe_key";
+    private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
+    private static final String TAB_POSITION_INTENT_KEY = "tabPosition";
+    private static final String IS_TABLET_LAYOUT_INTENT_KEY = "isTabletLayout";
+
+
     /*
      * Fields
      */
 
-    private Recipe mRecipeSelected;
-    private static final String RECIPE_KEY = "recipe_key";
 
-    private Unbinder unbinder;
+    // Data
+    private Recipe mRecipeSelected;
+
+    // Activity
     private View mRootView;
+    private boolean mIsTabletLayout;
+
+    // Butter Knife
+    private Unbinder unbinder;
+
 
     /*
      * Methods
      */
+
 
     /**
      * Creates a new instance of a StepsListFragment
      *
      * @param recipe The recipe selected by the user
      *
-     * @return An instance of StepListFragment
+     * @return An instance of StepListFragment with arguments
      */
     public static StepsListFragment newInstance(Recipe recipe) {
 
@@ -79,6 +98,7 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
         super.onCreate(savedInstanceState);
 
         Recipe recipeSelected = getArguments().getParcelable(RECIPE_KEY);
+
         if(recipeSelected != null) {
             mRecipeSelected = recipeSelected;
         }
@@ -88,9 +108,16 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.steps_list_fragment, container, false);
-        unbinder = ButterKnife.bind(this, mRootView);
 
+        if(savedInstanceState != null && savedInstanceState.containsKey(IS_TABLET_LAYOUT_INTENT_KEY)) {
+            mIsTabletLayout = savedInstanceState.getBoolean(IS_TABLET_LAYOUT_INTENT_KEY);
+        }
+
+        // Bind views
+        unbinder = ButterKnife.bind(this, mRootView);
+        // Set adapter
         setStepsAdapter(mStepListRecyclerView);
+
         return mRootView;
     }
 
@@ -111,25 +138,39 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
                 this,
                 this));
 
-        // Add a divider decoration
+        addItemDecoration(mLinearLayoutManager, rootView);
+    }
+
+    /**
+     * Adds an item decoration between the items of the RecyclerView
+     *
+     * @param linearLayoutManager A Linear Layout Manager
+     * @param rootView The RecyclerView that contains the items separated by the decoration
+     */
+    private void addItemDecoration(LinearLayoutManager linearLayoutManager, RecyclerView rootView) {
+        // Add a divider decoration between step items
         DividerItemDecoration mDividerItemDecoration = new DividerItemDecoration(rootView.getContext(),
-                mLinearLayoutManager.getOrientation());
+                linearLayoutManager.getOrientation());
         rootView.addItemDecoration(mDividerItemDecoration);
     }
+
+    /*
+     * Implementation
+     */
 
     @Override
     public void onClick(Step step, int position) {
 
-        if(mTabletLayout) {
+        if(mIsTabletLayout) {
             StepFragment stepFragment = StepFragment.newInstance(step);
 
             getFragmentManager().beginTransaction()
-                    .replace(R.id.step_details_frame_layout, stepFragment)
+                    .replace(R.id.step_details_frame_layout, stepFragment, STEP_FRAGMENT_UNIQUE_ID)
                     .commit();
         } else {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
-            intent.putExtra("recipeObject", mRecipeSelected);
-            intent.putExtra("tabPosition", position);
+            intent.putExtra(RECIPE_OBJECT_INTENT_KEY, mRecipeSelected);
+            intent.putExtra(TAB_POSITION_INTENT_KEY, position);
             startActivity(intent);
         }
     }
@@ -147,7 +188,7 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
                     .commit();
         } else {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
-            intent.putExtra("recipeObject", mRecipeSelected);
+            intent.putExtra(RECIPE_OBJECT_INTENT_KEY, mRecipeSelected);
             startActivity(intent);
         }
     }
@@ -155,6 +196,20 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        // Unbind views
         unbinder.unbind();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean(IS_TABLET_LAYOUT_INTENT_KEY, mIsTabletLayout);
+        super.onSaveInstanceState(outState);
+    }
+
+    /*
+         * Sets if the layout displayed is a tablet or a phone
+         */
+    public void setIsTabletLayout(boolean isTabletLayout) {
+        mIsTabletLayout = isTabletLayout;
     }
 }

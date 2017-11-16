@@ -28,6 +28,7 @@ public class Recipe implements Parcelable {
      * Constructors
      */
 
+
     public Recipe(String name, ArrayList<Ingredient>  ingredients, ArrayList<Step> steps, int servings, String image) {
         mName = name;
         mIngredients = ingredients;
@@ -45,9 +46,11 @@ public class Recipe implements Parcelable {
         mIsFavorite = in.readInt() == 1;
     }
 
+
     /*
      * Implementing Parcelable
      */
+
 
     @Override
     public int describeContents() {
@@ -76,9 +79,11 @@ public class Recipe implements Parcelable {
         }
     };
 
+
     /*
      * Getters
      */
+
 
     public String getRecipeName() { return mName; }
     public ArrayList<Ingredient> getRecipeIngredients() { return mIngredients; }
@@ -87,9 +92,11 @@ public class Recipe implements Parcelable {
     public String getRecipeImage() { return mImage; }
     public boolean getIsFavorite() { return mIsFavorite; }
 
+
     /*
      * Setters
      */
+
 
     public void setRecipeName(String name) { mName = name; }
     public void setRecipeIngredients(ArrayList<Ingredient> ingredients) { mIngredients = ingredients; }

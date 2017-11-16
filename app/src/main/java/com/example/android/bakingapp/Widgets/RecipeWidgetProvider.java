@@ -19,17 +19,24 @@ import static android.util.TypedValue.COMPLEX_UNIT_SP;
 public class RecipeWidgetProvider extends AppWidgetProvider {
 
     /*
+     * Constants
+     */
+
+    public static final int UNIQUE_INTENT_CODE = 5;
+
+
+    /*
      * Fields
      */
 
-    private static boolean isWidgetEmpty = true;
-    public static int UNIQUE_INTENT_CODE = 5;
 
     public static Recipe mRecipeSelected;
+
 
     /*
      * Methods
      */
+
 
     static void updateAppWidgets(Context context, AppWidgetManager appWidgetManager,
                                  Recipe recipeSelected, int[] appWidgetIds) {
@@ -39,11 +46,11 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             // If there is a previous recipe stored in memory
             if (mRecipeSelected != null) {
                 setNonEmptyWidgets(context, appWidgetIds, appWidgetManager, false);
-            // Else, if there is no previous recipe selected
+                // Else, if there is no previous recipe selected
             } else {
                 setEmptyWidgetsUI(context, appWidgetIds, appWidgetManager);
             }
-        // Else, if it's an update to an existing widget
+            // Else, if it's an update to an existing widget
         } else {
             mRecipeSelected = recipeSelected;
             setNonEmptyWidgets(context, appWidgetIds, appWidgetManager, true);
@@ -58,19 +65,17 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
     }
 
     @Override
     public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
     }
 
     /**
      * Sets up the UI for an empty widget with no recipe selected
      *
-     * @param context The context
-     * @param appWidgetIds The widget ids
+     * @param context          The context
+     * @param appWidgetIds     The widget ids
      * @param appWidgetManager The widget manager
      */
     private static void setEmptyWidgetsUI(Context context, int[] appWidgetIds, AppWidgetManager appWidgetManager) {
@@ -78,29 +83,37 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             // Construct the RemoteViews object
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 
-            views.setTextViewText(R.id.appwidget_text, context.getString(R.string.widget_empty_message));
-            views.setTextViewTextSize(R.id.appwidget_text, COMPLEX_UNIT_SP, 16);
-            views.setImageViewResource(R.id.appwidget_image, R.drawable.chef);
-
-            views.setViewVisibility(R.id.appwidget_servings_layout, View.GONE);
-            views.setViewVisibility(R.id.appwidget_ingredients_list_view, View.GONE);
-            views.setViewVisibility(R.id.appwidget_empty_ingredients_list, View.VISIBLE);
-
+            // Set up UI and listener
+            setUpEmptyUIProperties(context, views);
             WidgetUtils.addWidgetOnClickListeners(context, views, null);
 
-            // Instruct the widget manager to update the widget
+            // Update widget
             appWidgetManager.updateAppWidget(appWidgetId, views);
-
-            isWidgetEmpty = true;
         }
+    }
+
+    /**
+     * Sets up empty widget UI properties
+     *
+     * @param context The context
+     * @param views The widget's remote views
+     */
+    private static void setUpEmptyUIProperties(Context context, RemoteViews views) {
+        views.setTextViewText(R.id.appwidget_text, context.getString(R.string.widget_empty_message));
+        views.setTextViewTextSize(R.id.appwidget_text, COMPLEX_UNIT_SP, 16);
+        views.setImageViewResource(R.id.appwidget_image, R.drawable.chef);
+
+        views.setViewVisibility(R.id.appwidget_servings_layout, View.GONE);
+        views.setViewVisibility(R.id.appwidget_ingredients_list_view, View.GONE);
+        views.setViewVisibility(R.id.appwidget_empty_ingredients_list, View.VISIBLE);
     }
 
     /**
      * Sets the UI for non empty widgets, adds its onClickListener and displays a toast to
      * the user that the widget has been set
      *
-     * @param context The context
-     * @param appWidgetIds The Widgets Ids
+     * @param context          The context
+     * @param appWidgetIds     The Widgets Ids
      * @param appWidgetManager The Widget manager
      */
     private static void setNonEmptyWidgets(Context context, int[] appWidgetIds,
@@ -110,15 +123,9 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             // Construct the RemoteViews object
             RemoteViews views = getIngredientsRemoteListView(context);
 
-            views.setViewVisibility(R.id.appwidget_servings_layout, View.VISIBLE);
-            views.setViewVisibility(R.id.appwidget_ingredients_list_view, View.VISIBLE);
-            views.setViewVisibility(R.id.appwidget_empty_ingredients_list, View.GONE);
+            setUpNonEmptyUIProperties(views);
 
-            if(MainActivity.mTabletLayout) {
-                views.setTextViewTextSize(R.id.appwidget_text, COMPLEX_UNIT_SP, 24);
-            }
-
-            // Set UI nad listener
+            // Set UI and listener
             WidgetUtils.setWidgetUI(context, views, mRecipeSelected);
             WidgetUtils.addWidgetOnClickListeners(context, views, mRecipeSelected);
 
@@ -126,9 +133,25 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
 
-        if(displayUIMessage) {
+        if (displayUIMessage) {
             // Display toast
             WidgetUtils.displayWidgetUpdatedToast(context);
+        }
+    }
+
+    /**
+     * Sets up the UI properties of a non empty widget
+     *
+     * @param views RemoteView instance
+     */
+    private static void setUpNonEmptyUIProperties(RemoteViews views) {
+        views.setViewVisibility(R.id.appwidget_servings_layout, View.VISIBLE);
+        views.setViewVisibility(R.id.appwidget_ingredients_list_view, View.VISIBLE);
+        views.setViewVisibility(R.id.appwidget_empty_ingredients_list, View.GONE);
+        views.setViewVisibility(R.id.appwidget_servings_layout, View.VISIBLE);
+
+        if (MainActivity.mTabletLayout) {
+            views.setTextViewTextSize(R.id.appwidget_text, COMPLEX_UNIT_SP, 24);
         }
     }
 
@@ -139,7 +162,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
      *
      * @return Widget's remote view
      */
-    private static RemoteViews getIngredientsRemoteListView(Context context)  {
+    private static RemoteViews getIngredientsRemoteListView(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 
         Intent intent = new Intent(context, IngredientsListWidgetService.class);
