@@ -1,18 +1,18 @@
-#Baking App
+# Baking App
 
-####Project 3 | Udacity Android Developer Nanodegree
-
----
-
-A Baking App powered by recipes and resources provided by Udacity on [this link](https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json). 
+#### Project 3 | Udacity Android Developer Nanodegree
 
 ---
-####Features
+
+A Baking App that displays recipes and resources provided by [Udacity](http://udacity.com/) on [this link](https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json). 
 
 ---
-- When the user first launches the app, recipes will load. (If the device is a phone, they will display on a single row. Else if it's a tablet, they will display in two rows). Each recipe will display an image, its name and servings.
+#### Features
 
-- The user can swipe to the left to access the "Favorites" tab. If the user has previously selected favorite recipes, they will appear on this tab.
+---
+- When the user first launches the app, available recipes will load. (If the device is a phone, they will display on a single column. Else if it's a tablet, they will display in two columns). Each recipe will display an image, its name and number of servings.
+
+- The user can swipe to the left to access the "Favorites" tab. If the user has previously selected favorite recipes, they will appear on this tab. Else, if the user has not selected any favorite recipes, a screen with a message will be displayed.
 
 - If the user clicks on a recipe, he/she will be taken to a details screen (if the device is a phone, a list of the recipe steps will be displayed. If it's a tablet, a details screen will be displayed with the list of steps on the left and the recipe ingredients (by default) on the right).
 
@@ -28,13 +28,13 @@ A Baking App powered by recipes and resources provided by Udacity on [this link]
 
 ---
 
-####Widget
+#### Widget
 
 ----
 
 - The user can add a widget to the homescreen that will display the recipe's name, image, servings and a scrollable list of ingredients with their quantity and units.
 
-- The user can select a recipe to display on a widget by cling on the overflow menu at the top right corner of the screen and checking the "Add to widget" option.
+- The user can select a recipe to display on a widget by clicking on the overflow menu at the top right corner of the screen and checking the "Add to widget" option.
 
 - The user can toggle between an empty widget and a recipe to be displayed on the home screen widget.
 
@@ -46,17 +46,37 @@ A Baking App powered by recipes and resources provided by Udacity on [this link]
 
 ---
 
-####Atttributions
+#### Testing
 
 ---
-These were very helpful resources from which I found inspiration for certain elements of my code:
 
+- Tests are divided into Test Suites. One test suite for phones, one test suite for tablets and one test suite with general tests. 
+
+- UI Testing uses the [Espresso](https://developer.android.com/training/testing/espresso/index.html) library .
+ 
+---
+
+#### Handling various scenarios
+
+---
+
+- If there is no internet connection, a dialog will be displayed warning the user to reconnect. If the user had loaded data previously, it the app will retain it and the user will be able to access the elements that don't require internet connection.
+
+---
+
+#### Atttributions
+
+---
+These were very helpful resources from which I found inspiration for elements in my code:
+
+- [Danny roa RecyclerView matcher](http://dannyroa.com/2015/05/10/espresso-matching-views-in-recyclerview/)
+- [Danny roa RecyclerView matcher code](https://github.com/dannyroa/espresso-samples/blob/master/RecyclerView/app/src/androidTest/java/com/dannyroa/espresso_samples/recyclerview/RecyclerViewMatcher.java)
 - [Using child fragment manager in nested fragments](https://stackoverflow.com/a/29666094)
-- [Convert px to dp](https://stackoverflow.com/a/6327095)
+- [Convert dp to px](https://stackoverflow.com/a/6327095)
 - [Exoplayer full screen mode](https://geoffledak.com/blog/2017/09/11/how-to-add-a-fullscreen-toggle-button-to-exoplayer-in-android/)
 - [Retaining fragment on rotation](https://developer.android.com/guide/topics/resources/runtime-changes.html#RetainingAnObject)
 - [Creating an overflow menu](http://www.techotopia.com/index.php/Creating_and_Managing_Overflow_Menus_on_Android)
-- [Pleacholder image](https://pixabay.com/en/chef-cake-woman-lady-female-1773672/)
+- [Placeholder image](https://pixabay.com/en/chef-cake-woman-lady-female-1773672/)
 - [Chef hat image](https://pixabay.com/en/chef-cooking-hat-cap-cook-baker-295359/)
 - [Girl chef image](https://pixabay.com/en/chef-cake-woman-lady-female-1773672/)
 - [Change widget name](https://stackoverflow.com/questions/4536691/how-do-i-give-a-android-app-widget-a-label-name)
@@ -78,10 +98,6 @@ These were very helpful resources from which I found inspiration for certain ele
 - [Sending extras with Espresso](http://blog.xebia.com/android-intent-extras-espresso-rules/)
 - [Custom assertions with Espresso](https://stackoverflow.com/questions/36399787/how-to-count-recyclerview-items-with-espresso/37339656)
 - [Match multiple views](https://stackoverflow.com/questions/39977902/espresso-recylerview-in-viewpager-match-multiple-views/39978656)
-- [Set activity orientation](https://stackoverflow.com/questions/37362200/how-to-rotate-activity-i-mean-screen-orientation-change-using-espresso)
-- [Click on navigate up](https://stackoverflow.com/questions/40740062/how-to-write-code-for-android-toolbar-back-button-action-in-espresso)
-- [Danny roa RecyclerView matcher](http://dannyroa.com/2015/05/10/espresso-matching-views-in-recyclerview/)
-- [Danny roa RecyclerView matcher code](https://github.com/dannyroa/espresso-samples/blob/master/RecyclerView/app/src/androidTest/java/com/dannyroa/espresso_samples/recyclerview/RecyclerViewMatcher.java)
 - [Testing espresso using Shared Preferences](https://medium.com/@SimonKaz/android-testing-setting-sharedprefs-before-launching-an-activity-558730506b7c)
 - [Disable widget update](https://stackoverflow.com/questions/5641134/how-to-disable-widget-updateperiodmillis)
 - [Start activity with unique extras](https://stackoverflow.com/questions/31398575/start-new-activity-from-pendingintent-with-unique-extra)
@@ -92,12 +108,12 @@ These were very helpful resources from which I found inspiration for certain ele
 - [Full screen button](https://stackoverflow.com/questions/36990193/add-button-for-full-screen-video-with-exo-player)
 - [Creating Overflow Menu](http://www.techotopia.com/index.php/Creating_and_Managing_Overflow_Menus_on_Android)
 
-Images
+Images from Pixabay
 
 - [Brownie](https://pixabay.com/en/brownie-dessert-cake-sweet-548591/)
-- [Nutella Pie](https://pixabay.com/en/food-chocolate-dessert-sweet-1283885/)
+- [Cheesecake](https://pixabay.com/en/food-chocolate-dessert-sweet-1283885/)
 - [Yellow cake](https://pixabay.com/en/cake-golden-autumn-sweet-yellow-1002308/)
-- [Cake](https://pixabay.com/en/cake-chocolate-cake-cafe-bake-2001781/)
+- [Nutella Pie](https://pixabay.com/en/cake-chocolate-cake-cafe-bake-2001781/)
 
 
 <br>
