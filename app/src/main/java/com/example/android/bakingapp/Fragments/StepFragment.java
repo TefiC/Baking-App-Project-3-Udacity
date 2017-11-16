@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,7 +86,6 @@ public class StepFragment extends Fragment implements Player.EventListener {
      * passed as parameters
      *
      * @param recipeStep The corresponding recipe Step
-     *
      * @return A StepFragment instance with arguments
      */
     public static StepFragment newInstance(Step recipeStep) {
@@ -130,10 +130,20 @@ public class StepFragment extends Fragment implements Player.EventListener {
      */
     private void setUpExoPlayer() {
         // If the video URL is not empty, set up the video player
-        // Else, display a default image
+        // Else, display the step thumbnail.
+        // If the step doesn't have a video or thumbnail, display a default image
         if (!mStep.getStepVideoUrl().equals("")) {
             mSimpleExoPlayerView.setVisibility(View.VISIBLE);
             MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), mSimpleExoPlayerView, mExoPlayer);
+        } else if (!mStep.getThumbnailUrl().equals("")) {
+
+            Picasso.with(getActivity())
+                    .load(mStep.getThumbnailUrl())
+                    .placeholder(R.drawable.chef)
+                    .error(R.drawable.chef)
+                    .into(mStepDefaultImageView);
+
+            mStepDefaultImageView.setVisibility(View.VISIBLE);
         } else {
             mStepDefaultImageView.setVisibility(View.VISIBLE);
         }

@@ -1,13 +1,7 @@
 package com.example.android.bakingapp.DetailsActivityTests;
 
-/**
- * Created by estef on 11/14/2017.
- */
-
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
@@ -35,14 +29,10 @@ import static android.support.test.espresso.Espresso.openActionBarOverflowOrOpti
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.example.android.bakingapp.Utils.FavoritesUtils.SHARED_PREFERENCES_FAV_RECIPES_KEY;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.equalTo;
 
 /**
  * Test to verify Details Activity's general functionality on phones
@@ -159,25 +149,6 @@ public class DetailsActivityBasicPhoneTests {
     @Test
     public void tabPositionReceived_isSetCorrectlyAtStart() {
         onView(withText("Recipe Introduction")).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void clickOnFavoriteMenuIcon_TogglesDrawableResource() {
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mActivityTestRule.getActivity());
-
-        ViewInteraction actionMenuItemView = onView(
-                allOf(withId(R.id.favorite_button), withContentDescription("Favorite"), isDisplayed()));
-
-        if (sharedPreferences.contains(SHARED_PREFERENCES_FAV_RECIPES_KEY)) {
-            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_selected));
-            actionMenuItemView.perform(click());
-            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_not_selected));
-        } else {
-            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_not_selected));
-            actionMenuItemView.perform(click());
-            assertThat(mActivityTestRule.getActivity().mFavoriteIconSelectedId, equalTo(R.drawable.favorite_selected));
-        }
     }
 
     @Test

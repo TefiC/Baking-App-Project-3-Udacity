@@ -20,7 +20,7 @@ A Baking App that displays recipes and resources provided by [Udacity](http://ud
 
 - The ingredients screen will display the recipe image and a list of the ingredients, its quantity and unit. 
 
-- Each step will display a video or if there is no video available, a placeholder image. Additionally, a description of the step will also be displayed.
+- Each step will display a video using ExoPlayer or if there is no video available, an image. If none of these are available, a placeholder image will be displayed. Additionally, a description of the step will be displayed.
 
 - The video can be toggled from full screen mode back to normal mode and vice versa.
 
@@ -50,7 +50,7 @@ A Baking App that displays recipes and resources provided by [Udacity](http://ud
 
 ---
 
-- Tests are divided into Test Suites. One test suite for phones, one test suite for tablets and one test suite with general tests. 
+- Tests are divided into Test Suites. A test suite for phones, a test suite for tablets and a test suite with general tests. 
 
 - UI Testing uses the [Espresso](https://developer.android.com/training/testing/espresso/index.html) library .
  

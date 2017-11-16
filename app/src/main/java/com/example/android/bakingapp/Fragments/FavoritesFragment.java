@@ -91,6 +91,8 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
 
         if(savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY_INSTANCE_STATE)) {
             mScrollPosition = savedInstanceState.getInt(SCROLL_KEY_INSTANCE_STATE);
+        } else {
+            mScrollPosition = -1;
         }
 
         return mRootView;
@@ -106,12 +108,19 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
         if (mFavoriteRecipesArrayList.size() > 0) {
             mMainRecipesLayout.setVisibility(View.VISIBLE);
             setFavoriteRecipesAdapter();
-            mMainRecipesLayout.smoothScrollToPosition(mScrollPosition);
+
+            if(mMainRecipesLayout != null && mScrollPosition != -1) {
+                mMainRecipesLayout.smoothScrollToPosition(mScrollPosition);
+            }
+
             // Else, display a "No favorites selected" screen
         } else {
             toggleNoFavoritesScreen();
             setFavoriteRecipesAdapter();
-            mMainRecipesLayout.smoothScrollToPosition(mScrollPosition);
+
+            if(mMainRecipesLayout != null && mScrollPosition != -1) {
+                mMainRecipesLayout.smoothScrollToPosition(mScrollPosition);
+            }
         }
         super.onStart();
     }
@@ -206,8 +215,10 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if(mTabletLayout) {
-            outState.putInt(SCROLL_KEY_INSTANCE_STATE, mGridLayoutManager.findFirstVisibleItemPosition());
-        } else {
+            if(mGridLayoutManager != null && mFavoriteRecipesArrayList.size() > 0) {
+                outState.putInt(SCROLL_KEY_INSTANCE_STATE, mGridLayoutManager.findFirstVisibleItemPosition());
+            }
+        } else if (mLinearLayoutManager != null && mFavoriteRecipesArrayList.size() > 0) {
             outState.putInt(SCROLL_KEY_INSTANCE_STATE, mLinearLayoutManager.findFirstVisibleItemPosition());
         }
         super.onSaveInstanceState(outState);
