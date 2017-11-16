@@ -109,7 +109,10 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         if(savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY_INSTANCE_STATE)) {
             int position = savedInstanceState.getInt(SCROLL_KEY_INSTANCE_STATE);
-            mMainListRecyclerView.smoothScrollToPosition(position);
+
+            if(RecipesListFragment.mRecipesArray.size() > 0) {
+                mMainListRecyclerView.smoothScrollToPosition(position);
+            }
         }
 
         return mRootView;
@@ -174,6 +177,7 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
     private void toggleNoConnectionScreen(boolean displayScreen) {
         if (displayScreen) {
             mRootView.findViewById(R.id.no_connection_main_layout).setVisibility(View.VISIBLE);
+            mRootView.findViewById(R.id.main_recipes_grid_layout).setVisibility(View.GONE);
         } else {
             mRootView.findViewById(R.id.no_connection_main_layout).setVisibility(View.GONE);
         }

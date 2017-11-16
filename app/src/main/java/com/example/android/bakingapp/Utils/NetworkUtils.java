@@ -107,7 +107,6 @@ public class NetworkUtils {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
     /**
      * Creates and displays an alert dialog telling the user
      * there is no internet connection

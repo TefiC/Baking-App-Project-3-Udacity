@@ -1,5 +1,7 @@
 package com.example.android.bakingapp.Fragments;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,7 +11,6 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,20 +20,27 @@ import com.example.android.bakingapp.RecipesData.Step;
 import com.example.android.bakingapp.Utils.MediaPlayerUtils;
 import com.example.android.bakingapp.Utils.RecipeDataUtils;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static com.example.android.bakingapp.Utils.MediaPlayerUtils.mMediaSession;
 import static com.example.android.bakingapp.Utils.MediaPlayerUtils.mStateBuilder;
 
 /**
@@ -61,6 +69,7 @@ public class StepFragment extends Fragment implements Player.EventListener {
 
 
     private static final String RECIPE_STEP_KEY = "recipe_step";
+    private static final String PLAYER_POSITION_KEY = "playerPosition";
 
 
     /*
@@ -70,7 +79,6 @@ public class StepFragment extends Fragment implements Player.EventListener {
 
     private Step mStep;
     public static SimpleExoPlayer mExoPlayer;
-    private FrameLayout mFullScreenButton;
 
     // Butter Knife
     private Unbinder unbinder;
@@ -121,6 +129,12 @@ public class StepFragment extends Fragment implements Player.EventListener {
         // Populate step description
         setStepDescriptionText();
 
+        if(savedInstanceState != null && savedInstanceState.containsKey(PLAYER_POSITION_KEY)) {
+            if(mExoPlayer != null) {
+                mExoPlayer.seekTo(savedInstanceState.getLong(PLAYER_POSITION_KEY));
+            }
+        }
+
         return rootView;
     }
 
@@ -134,7 +148,7 @@ public class StepFragment extends Fragment implements Player.EventListener {
         // If the step doesn't have a video or thumbnail, display a default image
         if (!mStep.getStepVideoUrl().equals("")) {
             mSimpleExoPlayerView.setVisibility(View.VISIBLE);
-            MediaPlayerUtils.initializeExoPlayer(getActivity(), mStep.getStepVideoUrl(), mSimpleExoPlayerView, mExoPlayer);
+            initializeExoPlayer(mStep.getStepVideoUrl(), mSimpleExoPlayerView);
         } else if (!mStep.getThumbnailUrl().equals("")) {
 
             Picasso.with(getActivity())
@@ -151,6 +165,47 @@ public class StepFragment extends Fragment implements Player.EventListener {
         // Initialize media player
         MediaPlayerUtils.initFullscreenDialog(getActivity(), mSimpleExoPlayerView, mStepMainLayout, mExoPlayer);
         MediaPlayerUtils.initFullscreenButton(getActivity(), mSimpleExoPlayerView, mStepMainLayout, mExoPlayer);
+    }
+
+    /**
+     * Initializes ExoPlayer on a SimpleExoPlayerView
+     *
+     * @param videoUrlString The URL to fetch the video that will be played by ExoPlayer
+     * @param playerView     The view where the video will be displayed
+     */
+    public void initializeExoPlayer(String videoUrlString,
+                                           SimpleExoPlayerView playerView) {
+
+        if (!videoUrlString.equals("")) {
+
+            TrackSelector trackSelector = new DefaultTrackSelector();
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(),
+                    trackSelector);
+
+            playerView.setPlayer(mExoPlayer);
+            MediaSource mediaSource = setupMediaSource(getActivity(), videoUrlString);
+
+            mExoPlayer.prepare(mediaSource);
+            mExoPlayer.setPlayWhenReady(false);
+        }
+    }
+
+    /**
+     * Sets up the media source that will be displayed by ExoPlayer
+     *
+     * @param context        The Context
+     * @param videoUrlString The URL of the video that will be displayed
+     *
+     * @return A MediaSource from an HTTP resource
+     */
+    private static MediaSource setupMediaSource(Context context, String videoUrlString) {
+        // Setup Media Source
+        String userAgent = Util.getUserAgent(context, "BakingApp");
+        return new ExtractorMediaSource(Uri.parse(videoUrlString),
+                new DefaultDataSourceFactory(context, userAgent),
+                new DefaultExtractorsFactory(),
+                null,
+                null);
     }
 
     /*
@@ -180,7 +235,16 @@ public class StepFragment extends Fragment implements Player.EventListener {
         mStep = step;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
 
+        if(mExoPlayer != null) {
+            long position = mExoPlayer.getCurrentPosition();
+            outState.putLong(PLAYER_POSITION_KEY, position);
+        }
+
+        super.onSaveInstanceState(outState);
+    }
 
     /*
      * Lifecycle methods
@@ -235,7 +299,6 @@ public class StepFragment extends Fragment implements Player.EventListener {
             mStateBuilder.setState(PlaybackStateCompat.STATE_PAUSED,
                     mExoPlayer.getCurrentPosition(), 1f);
         }
-        mMediaSession.setPlaybackState(mStateBuilder.build());
     }
 
     @Override

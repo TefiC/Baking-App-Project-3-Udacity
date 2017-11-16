@@ -3,9 +3,7 @@ package com.example.android.bakingapp.Utils;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,17 +12,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.android.bakingapp.R;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import static com.example.android.bakingapp.Activities.MainActivity.mTabletLayout;
 
@@ -48,7 +38,6 @@ public class MediaPlayerUtils {
 
     private static boolean mIsExoPlayerFullScreen;
     private static Dialog mFullScreenDialog;
-    public static MediaSessionCompat mMediaSession;
     public static PlaybackStateCompat.Builder mStateBuilder;
 
 
@@ -56,31 +45,6 @@ public class MediaPlayerUtils {
      * Methods
      */
 
-
-    /**
-     * Initializes ExoPlayer on a SimpleExoPlayerView
-     *
-     * @param context        The context
-     * @param videoUrlString The URL to fetch the video that will be played by ExoPlayer
-     * @param playerView     The view where the video will be displayed
-     * @param exoPlayer      An ExoPlayer instance
-     */
-    public static void initializeExoPlayer(Context context, String videoUrlString,
-                                           SimpleExoPlayerView playerView, SimpleExoPlayer exoPlayer) {
-
-        if (exoPlayer == null && !videoUrlString.equals("")) {
-
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            exoPlayer = ExoPlayerFactory.newSimpleInstance(context,
-                    trackSelector);
-
-            playerView.setPlayer(exoPlayer);
-            MediaSource mediaSource = setupMediaSource(context, videoUrlString);
-
-            exoPlayer.prepare(mediaSource);
-            exoPlayer.setPlayWhenReady(false);
-        }
-    }
 
     /**
      * Stops and releases an instance of SimpleExoPlayer
@@ -93,23 +57,6 @@ public class MediaPlayerUtils {
             simpleExoPlayer.release();
             simpleExoPlayer = null;
         }
-    }
-
-    /**
-     * Sets up the media source that will be displayed by ExoPlayer
-     *
-     * @param context        The Context
-     * @param videoUrlString The URL of the video that will be displayed
-     * @return A MediaSource from an HTTP resource
-     */
-    private static MediaSource setupMediaSource(Context context, String videoUrlString) {
-        // Setup Media Source
-        String userAgent = Util.getUserAgent(context, USER_AGENT_STRING);
-        return new ExtractorMediaSource(Uri.parse(videoUrlString),
-                new DefaultDataSourceFactory(context, userAgent),
-                new DefaultExtractorsFactory(),
-                null,
-                null);
     }
 
 
@@ -275,6 +222,5 @@ public class MediaPlayerUtils {
             exoPlayerView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     RecipeDataUtils.convertDpToPixels(dimension, context)));
         }
-
     }
 }
