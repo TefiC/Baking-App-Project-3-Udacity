@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
     private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
     private static final String RECIPES_ARRAYLIST_INTENT_KEY = "recipeObjects";
     private static final String IS_TABLET_LAYOUT_INTENT_KEY = "isTabletLayout";
+    private static final String SCROLL_KEY_INSTANCE_STATE = "scroll";
 
 
     /*
@@ -70,6 +71,9 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
     private RelativeLayout mRootView;
     private Unbinder unbinder;
+
+    private GridLayoutManager mGridLayoutManager;
+    private LinearLayoutManager mLinearLayoutManager;
 
 
     /*
@@ -101,7 +105,12 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         // Set adapter and display the recipes
         setHomeFragmentAdapter();
-        mRootView.findViewById(R.id.main_recipes_grid_layout).setVisibility(View.VISIBLE);
+        mMainListRecyclerView.setVisibility(View.VISIBLE);
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY_INSTANCE_STATE)) {
+            int position = savedInstanceState.getInt(SCROLL_KEY_INSTANCE_STATE);
+            mMainListRecyclerView.smoothScrollToPosition(position);
+        }
 
         return mRootView;
     }
@@ -148,11 +157,11 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
 
         if (mTabletLayout) {
             // Create and apply the layout manager
-            GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+            mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
             recyclerView.setLayoutManager(mGridLayoutManager);
         } else {
             // Create and apply the layout manager
-            LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
+            mLinearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(mLinearLayoutManager);
         }
     }
@@ -294,6 +303,13 @@ public class HomeFragment extends Fragment implements RecipesMainAdapter.RecipeA
     public void onSaveInstanceState(@NonNull Bundle outState) {
         // Save data
         outState.putParcelableArrayList(RECIPES_ARRAYLIST_INTENT_KEY, RecipesListFragment.mRecipesArray);
+
+        if(mTabletLayout) {
+            outState.putInt(SCROLL_KEY_INSTANCE_STATE, mGridLayoutManager.findFirstVisibleItemPosition());
+        } else {
+            outState.putInt(SCROLL_KEY_INSTANCE_STATE, mLinearLayoutManager.findFirstVisibleItemPosition());
+        }
+
         super.onSaveInstanceState(outState);
     }
 }

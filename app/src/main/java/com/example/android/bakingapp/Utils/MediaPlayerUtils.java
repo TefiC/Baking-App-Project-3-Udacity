@@ -78,7 +78,7 @@ public class MediaPlayerUtils {
             MediaSource mediaSource = setupMediaSource(context, videoUrlString);
 
             exoPlayer.prepare(mediaSource);
-            exoPlayer.setPlayWhenReady(true);
+            exoPlayer.setPlayWhenReady(false);
         }
     }
 

@@ -50,6 +50,7 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
     private static final String TAB_POSITION_INTENT_KEY = "tabPosition";
     private static final String IS_TABLET_LAYOUT_INTENT_KEY = "isTabletLayout";
+    private static final String SCROLL_KEY_INSTANCE_STATE = "scroll";
 
 
     /*
@@ -66,6 +67,8 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
 
     // Butter Knife
     private Unbinder unbinder;
+
+    private LinearLayoutManager mLinearLayoutManager;
 
 
     /*
@@ -118,6 +121,11 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
         // Set adapter
         setStepsAdapter(mStepListRecyclerView);
 
+        if(savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY_INSTANCE_STATE)) {
+            int position = savedInstanceState.getInt(SCROLL_KEY_INSTANCE_STATE);
+            ((RecyclerView) mRootView).smoothScrollToPosition(position);
+        }
+
         return mRootView;
     }
 
@@ -129,7 +137,7 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     private void setStepsAdapter(RecyclerView rootView) {
 
         // Create and apply the layout manager
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         rootView.setLayoutManager(mLinearLayoutManager);
 
         rootView.setAdapter(new StepsListAdapter(getActivity(),
@@ -203,6 +211,7 @@ public class StepsListFragment extends Fragment implements StepsListAdapter.Step
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putBoolean(IS_TABLET_LAYOUT_INTENT_KEY, mIsTabletLayout);
+        outState.putInt(SCROLL_KEY_INSTANCE_STATE, mLinearLayoutManager.findFirstVisibleItemPosition());
         super.onSaveInstanceState(outState);
     }
 

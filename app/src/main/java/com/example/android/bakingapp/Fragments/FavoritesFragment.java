@@ -53,6 +53,7 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
 
     private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
     private static final String IS_TABLET_LAYOUT_INTENT_KEY = "isTabletLayout";
+    private static final String SCROLL_KEY_INSTANCE_STATE = "scroll";
 
     /*
      * Fields
@@ -62,6 +63,11 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
 
     // Butter Knife
     private Unbinder unbinder;
+
+    private GridLayoutManager mGridLayoutManager;
+    private LinearLayoutManager mLinearLayoutManager;
+
+    private int mScrollPosition;
 
     /*
      * Methods
@@ -83,6 +89,10 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
         // Bind views
         unbinder = ButterKnife.bind(this, mRootView);
 
+        if(savedInstanceState != null && savedInstanceState.containsKey(SCROLL_KEY_INSTANCE_STATE)) {
+            mScrollPosition = savedInstanceState.getInt(SCROLL_KEY_INSTANCE_STATE);
+        }
+
         return mRootView;
     }
 
@@ -96,10 +106,12 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
         if (mFavoriteRecipesArrayList.size() > 0) {
             mMainRecipesLayout.setVisibility(View.VISIBLE);
             setFavoriteRecipesAdapter();
+            mMainRecipesLayout.smoothScrollToPosition(mScrollPosition);
             // Else, display a "No favorites selected" screen
         } else {
             toggleNoFavoritesScreen();
             setFavoriteRecipesAdapter();
+            mMainRecipesLayout.smoothScrollToPosition(mScrollPosition);
         }
         super.onStart();
     }
@@ -168,11 +180,11 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
 
         if (mTabletLayout) {
             // Create and apply the layout manager
-            GridLayoutManager mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
+            mGridLayoutManager = new GridLayoutManager(getActivity(), 2);
             recyclerView.setLayoutManager(mGridLayoutManager);
         } else {
             // Create and apply the layout manager
-            LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(getActivity());
+            mLinearLayoutManager = new LinearLayoutManager(getActivity());
             recyclerView.setLayoutManager(mLinearLayoutManager);
         }
     }
@@ -189,5 +201,15 @@ public class FavoritesFragment extends Fragment implements RecipesMainAdapter.Re
             mNoFavoritesLayout.setVisibility(View.VISIBLE);
             mMainRecipesLayout.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if(mTabletLayout) {
+            outState.putInt(SCROLL_KEY_INSTANCE_STATE, mGridLayoutManager.findFirstVisibleItemPosition());
+        } else {
+            outState.putInt(SCROLL_KEY_INSTANCE_STATE, mLinearLayoutManager.findFirstVisibleItemPosition());
+        }
+        super.onSaveInstanceState(outState);
     }
 }

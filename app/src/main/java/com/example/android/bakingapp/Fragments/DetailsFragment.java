@@ -141,11 +141,19 @@ public class DetailsFragment extends Fragment {
     private void setTabOnClickListener() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if(StepFragment.mExoPlayer != null) {
+                    StepFragment.mExoPlayer.setPlayWhenReady(false);
+                }
+            }
 
             @Override
             public void onPageSelected(int position) {
                 mCurrentTabSelected = position;
+
+                if(StepFragment.mExoPlayer != null) {
+                    StepFragment.mExoPlayer.setPlayWhenReady(false);
+                }
             }
 
             @Override

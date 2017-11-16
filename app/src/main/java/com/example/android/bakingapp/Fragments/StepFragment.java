@@ -68,7 +68,7 @@ public class StepFragment extends Fragment implements Player.EventListener {
 
 
     private Step mStep;
-    private SimpleExoPlayer mExoPlayer;
+    public static SimpleExoPlayer mExoPlayer;
     private FrameLayout mFullScreenButton;
 
     // Butter Knife

@@ -23,6 +23,7 @@ public class StepsListActivity extends AppCompatActivity {
      */
 
     private static final String RECIPE_OBJECT_INTENT_KEY = "recipeObject";
+    private static final String STEPS_LIST_FRAGMENT_UNIQUE_ID = "stepsListFragment";
 
 
     /*
@@ -31,6 +32,7 @@ public class StepsListActivity extends AppCompatActivity {
 
 
     private Recipe mRecipeObject;
+    private StepsListFragment mStepsListFragment;
 
 
     /*
@@ -58,11 +60,20 @@ public class StepsListActivity extends AppCompatActivity {
     private void setupStepListFragment() {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        StepsListFragment stepsListFragment = StepsListFragment.newInstance(mRecipeObject);
+        mStepsListFragment = (StepsListFragment) fragmentManager.findFragmentByTag(STEPS_LIST_FRAGMENT_UNIQUE_ID);
 
-        fragmentManager.beginTransaction()
-                .replace(R.id.steps_list_fragment, stepsListFragment)
-                .commit();
+        if(mStepsListFragment == null) {
+            StepsListFragment stepsListFragment = StepsListFragment.newInstance(mRecipeObject);
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.steps_list_fragment, stepsListFragment, STEPS_LIST_FRAGMENT_UNIQUE_ID)
+                    .commit();
+        } else {
+
+            fragmentManager.beginTransaction()
+                    .replace(R.id.steps_list_fragment, mStepsListFragment, STEPS_LIST_FRAGMENT_UNIQUE_ID)
+                    .commit();
+        }
     }
 
     /*
